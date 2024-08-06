@@ -1,0 +1,45 @@
+body {
+  color: #fff;
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.content img {
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+}
+.content .typewriter-wrapper {
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.content .typewriter-wrapper #text {
+  font-family: monospace;
+  font-size: 36px;
+  padding: 20px;
+}
+.content .typewriter-wrapper #text .line {
+  animation: blink 0.5s step-end infinite alternate;
+  border-right: 3px solid;
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}/*# sourceMappingURL=style.css.map */

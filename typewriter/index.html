@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="content">
+        <img src="./asset/bg.jpg" alt="bg">
+        <div class="typewriter-wrapper">
+            <div id="text"></div>
+        </div>
+    </div>
+    <script>
+        var str = 'Mountains are the beginning and the end of all natural scenery. - John Ruskin'
+        var flag = 0
+        function typing() {
+            let typingDiv = document.getElementById('text')
+            if (flag <= str.length) {
+                typingDiv.innerHTML = str.slice(0, flag++) + `<span class='line'></span>`
+                setTimeout('typing()', 100)
+            }
+            else {
+                typingDiv.innerHTML = str + `<span class='line'></span>`
+            }
+        }
+        typing()
+    </script>
+</body>
+
+</html>
