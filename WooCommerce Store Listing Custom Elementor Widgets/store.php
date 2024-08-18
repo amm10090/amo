@@ -1,3 +1,4 @@
+<?php
 // Add a "Store" column to the WooCommerce product list
 add_filter('manage_product_posts_columns', 'add_store_column_to_products');
 
@@ -150,4 +151,64 @@ function filter_products_by_store($query) {
             'compare' => '='
         );
     }
+}
+
+// Add quick edit functionality for store selection
+add_action('quick_edit_custom_box', 'add_quick_edit_store_field', 10, 2);
+add_action('save_post', 'save_quick_edit_store_field');
+add_action('admin_footer', 'quick_edit_store_javascript');
+
+function add_quick_edit_store_field($column_name, $post_type) {
+    if ($column_name != 'store' || $post_type != 'product') return;
+    ?>
+    <fieldset class="inline-edit-col-right">
+        <div class="inline-edit-col">
+            <label>
+                <span class="title">Store</span>
+                <select name="associated_store" id="associated_store">
+                    <option value="">Select Store</option>
+                    <?php
+                    $stores = get_posts(array('post_type' => 'store', 'posts_per_page' => -1));
+                    foreach ($stores as $store) {
+                        echo '<option value="' . esc_attr($store->ID) . '">' . esc_html($store->post_title) . '</option>';
+                    }
+                    ?>
+                </select>
+            </label>
+        </div>
+    </fieldset>
+    <?php
+}
+
+function save_quick_edit_store_field($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (!current_user_can('edit_post', $post_id)) return;
+    if (!isset($_POST['associated_store'])) return;
+
+    update_post_meta($post_id, '_associated_store', sanitize_text_field($_POST['associated_store']));
+}
+
+function quick_edit_store_javascript() {
+    global $current_screen;
+    if ($current_screen->id != 'edit-product') return;
+    ?>
+    <script type="text/javascript">
+    jQuery(function($){
+        var $wp_inline_edit = inlineEditPost.edit;
+        inlineEditPost.edit = function(id) {
+            $wp_inline_edit.apply(this, arguments);
+            var post_id = 0;
+            if (typeof(id) == 'object') {
+                post_id = parseInt(this.getId(id));
+            }
+            if (post_id > 0) {
+                var $edit_row = $('#edit-' + post_id);
+                var $post_row = $('#post-' + post_id);
+                var store_id = $post_row.find('.column-store a').attr('href').split('post=')[1].split('&')[0];
+                $edit_row.find('select[name="associated_store"]').val(store_id);
+            }
+        };
+    });
+    </script>
+    <?php
 }
