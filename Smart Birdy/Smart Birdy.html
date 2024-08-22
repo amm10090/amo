@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Birdy - Exclusive Affiliate Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .poster {
+            width: 800px;
+            background: linear-gradient(135deg, #fff6f3, #ffe4dc);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .poster:hover {
+            transform: translateY(-10px);
+        }
+        .header {
+            background-color: #ffc4b3;
+            padding: 30px;
+            text-align: center;
+        }
+        .logo img {
+            max-width: 180px;
+            transition: transform 0.3s ease;
+        }
+        .logo img:hover {
+            transform: scale(1.05);
+        }
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            color: #333;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        h2 {
+            font-size: 2em;
+            margin: 30px 0;
+            color: #ffc4b3;
+        }
+        p {
+            color: #4a4a4a;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            background-image: url('https://www.smartbirdy.com/cdn/shop/files/Shopify_Miami_Hero_Banner.png?v=1693528641');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,196,179,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-text {
+            color: #fff;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .content {
+            padding: 40px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .feature {
+            width: 48%;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .feature:hover {
+            transform: translateX(10px);
+        }
+        .feature-icon {
+            font-size: 36px;
+            color: #ffc4b3;
+            margin-right: 20px;
+        }
+        .feature-text h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .feature-text p {
+            margin: 0;
+            font-size: 1em;
+        }
+        .cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #ffc4b3;
+            color: #fff;
+            padding: 15px 40px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .button:hover {
+            background-color: #ff9b8a;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,155,138,0.4);
+        }
+        .footer {
+            background-color: #ffc4b3;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="poster fade-in">
+        <div class="header">
+            <div class="logo">
+                <img src="https://www.smartbirdy.com/cdn/shop/files/Smart_Birdy_Logo_Vector_210x.png?v=1657602187" alt="Smart Birdy Logo">
+            </div>
+            <h1>Exclusive Affiliate Program</h1>
+            <p>Elevate Your Influence with Luxury Travel Essentials</p>
+        </div>
+        <div class="hero-image">
+            <div class="hero-overlay">
+                <div class="hero-text">Redefining Travel Elegance</div>
+            </div>
+        </div>
+        <div class="content">
+            <h2>Unparalleled Partner Benefits</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <ion-icon name="diamond-outline"></ion-icon>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Premium Commissions</h3>
+                        <p>Earn up to 15% on every sale</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <ion-icon name="time-outline"></ion-icon>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Extended Cookie Life</h3>
+                        <p>60-day attribution window</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <ion-icon name="gift-outline"></ion-icon>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Exclusive Promotions</h3>
+                        <p>Access to VIP offers and early releases</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <ion-icon name="trending-up-outline"></ion-icon>
+                    </div>
+                    <div class="feature-text">
+                        <h3>High-Value Orders</h3>
+                        <p>$600+ average order value</p>
+                    </div>
+                </div>
+            </div>
+            <h2>The Smart Birdy Difference</h2>
+            <p>Smart Birdy redefines travel accessories for the discerning woman. Our collection seamlessly blends sophistication with functionality, offering TSA-compliant luxury that elevates every journey. Crafted with meticulous attention to detail, each piece embodies the essence of modern elegance and practical innovation.</p>
+            <div class="cta">
+                <a href="#" class="button">Become an Exclusive Partner</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>For inquiries: partnerships@smartbirdy.com | Follow us @smartbirdy</p>
+        </div>
+    </div>
+</body>
+</html>
