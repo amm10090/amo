@@ -1,28 +1,36 @@
+<?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-function register_store_coupons_widget() {
+function register_dynamic_store_coupons_widget()
+{
     if (!did_action('elementor/loaded')) {
         return;
     }
 
-    class Store_Coupons_Widget extends \Elementor\Widget_Base {
-        public function get_name() {
-            return 'store_coupons';
+    class Dynamic_Store_Coupons_Widget extends \Elementor\Widget_Base
+    {
+        public function get_name()
+        {
+            return 'dynamic_store_coupons';
         }
 
-        public function get_title() {
-            return __('Store Coupons', 'my-custom-theme');
+        public function get_title()
+        {
+            return __('Dynamic Store Coupons', 'my-custom-theme');
         }
 
-        public function get_icon() {
+        public function get_icon()
+        {
             return 'eicon-coupon';
         }
 
-        public function get_categories() {
+        public function get_categories()
+        {
             return ['general'];
         }
 
-        protected function _register_controls() {
+        protected function _register_controls()
+        {
             // Content Section
             $this->start_controls_section(
                 'content_section',
@@ -33,12 +41,12 @@ function register_store_coupons_widget() {
             );
 
             $this->add_control(
-                'store',
+                'store_info',
                 [
-                    'label' => __('Select Store', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SELECT2,
-                    'options' => $this->get_stores(),
-                    'default' => '',
+                    'label' => __('Store Selection', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::RAW_HTML,
+                    'raw' => __('Coupons will be dynamically displayed based on the current store page.', 'my-custom-theme'),
+                    'content_classes' => 'elementor-descriptor',
                 ]
             );
 
@@ -241,24 +249,19 @@ function register_store_coupons_widget() {
             $this->end_controls_section();
         }
 
-        private function get_stores() {
-            $stores = get_posts(['post_type' => 'store', 'posts_per_page' => -1]);
-            $options = ['' => __('Select a store', 'my-custom-theme')];
-            foreach ($stores as $store) {
-                $options[$store->ID] = $store->post_title;
-            }
-            return $options;
-        }
-
-        protected function render() {
+        protected function render()
+        {
             $settings = $this->get_settings_for_display();
 
-            if (empty($settings['store'])) {
-                echo __('Please select a store.', 'my-custom-theme');
+            $store_id = $this->get_current_store_id();
+
+            if (!$store_id) {
+                echo __('This widget can only be used on a store page.', 'my-custom-theme');
                 return;
             }
 
-            $coupons = get_field('select_coupon', $settings['store']);
+            // 直接从商店的 "Select Coupon" 字段获取优惠券
+            $coupons = get_field('select_coupon', $store_id);
 
             if (!$coupons || empty($coupons)) {
                 echo __('No coupons found for this store.', 'my-custom-theme');
@@ -276,7 +279,16 @@ function register_store_coupons_widget() {
             echo '</div>';
         }
 
-        private function render_retailmenot_coupon_item($coupon_id, $settings) {
+        private function get_current_store_id()
+        {
+            if (is_singular('store')) {
+                return get_the_ID();
+            }
+            return null;
+        }
+
+        private function render_retailmenot_coupon_item($coupon_id, $settings)
+        {
             $coupon_title = get_field('coupon_title', $coupon_id);
             $coupon_description = get_field('coupon_description', $coupon_id);
             $coupon_selection_button = get_field('coupon_selection_button', $coupon_id) ?: 'SALE';
@@ -284,6 +296,7 @@ function register_store_coupons_widget() {
             $coupon_details = get_field('coupon_details', $coupon_id);
             $coupon_verified = get_field('coupon_verified', $coupon_id);
             $coupon_uses = get_field('coupon_uses', $coupon_id);
+            $coupon_url = get_field('coupon_code_url', $coupon_id);
 
             ?>
             <div class="coupon-item">
@@ -313,7 +326,7 @@ function register_store_coupons_widget() {
                     </div>
                     <div class="coupon-right">
                         <?php if ($settings['show_button'] === 'yes'): ?>
-                            <a href="#" class="coupon-button"><?php echo esc_html($coupon_button_text); ?></a>
+                            <a href="<?php echo esc_url($coupon_url); ?>" class="coupon-button" target="_blank"><?php echo esc_html($coupon_button_text); ?></a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -326,10 +339,11 @@ function register_store_coupons_widget() {
                     <?php echo wp_kses_post($coupon_details); ?>
                 </div>
             </div>
-            <?php
+        <?php
         }
 
-        private function render_styleless_coupon_item($coupon_id, $settings) {
+        private function render_styleless_coupon_item($coupon_id, $settings)
+        {
             $coupon_title = get_field('coupon_title', $coupon_id);
             $coupon_description = get_field('coupon_description', $coupon_id);
             $coupon_selection_button = get_field('coupon_selection_button', $coupon_id) ?: 'SALE';
@@ -337,13 +351,13 @@ function register_store_coupons_widget() {
             $coupon_details = get_field('coupon_details', $coupon_id);
             $coupon_verified = get_field('coupon_verified', $coupon_id);
             $coupon_uses = get_field('coupon_uses', $coupon_id);
+            $coupon_url = get_field('coupon_code_url', $coupon_id);
 
-            ?>
+        ?>
             <div class="coupon-item">
                 <?php if ($settings['show_title'] === 'yes'): ?>
                     <h3 class="coupon-title"><?php echo esc_html($coupon_title); ?></h3>
                 <?php endif; ?>
-
                 <?php if ($settings['show_description'] === 'yes'): ?>
                     <p class="coupon-description"><?php echo esc_html($coupon_description); ?></p>
                 <?php endif; ?>
@@ -353,7 +367,7 @@ function register_store_coupons_widget() {
                 <?php endif; ?>
 
                 <?php if ($settings['show_button'] === 'yes'): ?>
-                    <a href="#" class="coupon-button"><?php echo esc_html($coupon_button_text); ?></a>
+                    <a href="<?php echo esc_url($coupon_url); ?>" class="coupon-button" target="_blank"><?php echo esc_html($coupon_button_text); ?></a>
                 <?php endif; ?>
 
                 <?php if ($coupon_verified): ?>
@@ -369,16 +383,16 @@ function register_store_coupons_widget() {
                     <?php echo wp_kses_post($coupon_details); ?>
                 </div>
             </div>
-            <?php
+    <?php
         }
     }
 
-    \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new Store_Coupons_Widget());
+    \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new Dynamic_Store_Coupons_Widget());
 }
-add_action('elementor/widgets/widgets_registered', 'register_store_coupons_widget');
+add_action('elementor/widgets/widgets_registered', 'register_dynamic_store_coupons_widget');
 
 // 添加样式
-add_action('wp_head', function() {
+add_action('wp_head', function () {
     ?>
     <style>
         .store-coupons.retailmenot-template {
@@ -386,35 +400,42 @@ add_action('wp_head', function() {
             max-width: 800px;
             margin: 0 auto;
         }
+
         .retailmenot-template .coupon-item {
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             margin-bottom: 20px;
             padding: 20px;
         }
+
         .retailmenot-template .coupon-content {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
         }
+
         .retailmenot-template .coupon-left {
             flex: 0 0 100%;
             margin-bottom: 10px;
         }
+
         .retailmenot-template .coupon-center {
             flex: 1;
             padding: 0 20px;
         }
+
         .retailmenot-template .coupon-right {
             flex: 0 0 auto;
             text-align: right;
         }
+
         .retailmenot-template .coupon-title {
             font-size: 24px;
             font-weight: bold;
             color: #6c0ab7;
         }
+
         .retailmenot-template .coupon-selection-button {
             display: inline-block;
             background-color: #6c0ab7;
@@ -425,18 +446,22 @@ add_action('wp_head', function() {
             font-weight: bold;
             margin-bottom: 10px;
         }
+
         .retailmenot-template .coupon-description {
             font-size: 16px;
             color: #333;
             margin-bottom: 10px;
         }
+
         .retailmenot-template .coupon-meta {
             font-size: 14px;
             color: #777;
         }
+
         .retailmenot-template .coupon-verified:after {
             content: " • ";
         }
+
         .retailmenot-template .coupon-button {
             padding: 10px 20px;
             border-radius: 25px;
@@ -446,10 +471,12 @@ add_action('wp_head', function() {
             font-weight: bold;
             display: inline-block;
         }
+
         .retailmenot-template .coupon-footer {
             border-top: 1px solid #e0e0e0;
             padding-top: 15px;
         }
+
         .retailmenot-template .see-details {
             color: #333;
             text-decoration: none;
@@ -457,14 +484,17 @@ add_action('wp_head', function() {
             display: inline-block;
             cursor: pointer;
         }
+
         .retailmenot-template .details-icon {
             font-weight: bold;
             margin-left: 5px;
         }
+
         .retailmenot-template .coupon-details {
             margin-top: 15px;
             font-size: 14px;
         }
+
         @media (min-width: 768px) {
             .retailmenot-template .coupon-left {
                 flex: 0 0 30%;
@@ -472,53 +502,51 @@ add_action('wp_head', function() {
             }
         }
     </style>
-    <?php
+<?php
 });
 
 // 添加 JavaScript
-add_action('wp_footer', function() {
-    ?>
+add_action('wp_footer', function () {
+?>
     <script>
-    jQuery(document).ready(function($) {
-        function initCouponDetails() {
-            $('.store-coupons').off('click', '.see-details').on('click', '.see-details', function(e) {
-                e.preventDefault();
+        jQuery(document).ready(function($) {
+            function initCouponDetails() {
+                $('.store-coupons').off('click', '.see-details').on('click', '.see-details', function(e) {
+                    e.preventDefault();
 
-                var $this = $(this);
-                var $couponItem = $this.closest('.coupon-item');
-                var $details = $couponItem.find('.coupon-details');
-                var $icon = $this.find('.details-icon');
-                
-                $details.slideToggle(300, function() {
-                    if ($details.is(':visible')) {
-                        $icon.text('-');
-                        $this.contents().filter(function() {
-                            return this.nodeType === 3;
-                        }).first().replaceWith('Hide Details ');
-                    } else {
-                        $icon.text('+');
-                        $this.contents().filter(function() {
-                            return this.nodeType === 3;
-                        }).first().replaceWith('See Details ');
-                    }
+                    var $this = $(this);
+                    var $couponItem = $this.closest('.coupon-item');
+                    var $details = $couponItem.find('.coupon-details');
+                    var $icon = $this.find('.details-icon');
+
+                    $details.slideToggle(300, function() {
+                        if ($details.is(':visible')) {
+                            $icon.text('-');
+                            $this.contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).first().replaceWith('Hide Details ');
+                        } else {
+                            $icon.text('+');
+                            $this.contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).first().replaceWith('See Details ');
+                        }
+                    });
+                });
+            }
+
+            initCouponDetails();
+
+            // 监听 Elementor 前端变化
+            $(window).on('elementor/frontend/init', function() {
+                elementorFrontend.hooks.addAction('frontend/element_ready/dynamic_store_coupons.default', function($scope) {
+                    initCouponDetails();
                 });
             });
-        }
 
-        initCouponDetails();
-
-        // 监听 Elementor 前端变化
-        $(window).on('elementor/frontend/init', function() {
-            elementorFrontend.hooks.addAction('frontend/element_ready/store_coupons.default', function($scope) {
-                initCouponDetails();
-            });
+            // Remove the previous click event handler for .coupon-button
+            // The link will now work normally without JavaScript intervention
         });
-
-        $('.store-coupons').on('click', '.coupon-button', function(e) {
-            e.preventDefault();
-            // 在这里添加您的代码，例如复制优惠码到剪贴板或打开优惠链接
-        });
-    });
     </script>
-    <?php
+<?php
 });

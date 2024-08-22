@@ -1,33 +1,42 @@
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-// Register Store Products Widget
-add_action('elementor/widgets/widgets_registered', 'register_store_products_widget');
+// Register Dynamic Store Products Widget
+add_action('elementor/widgets/widgets_registered', 'register_dynamic_store_products_widget');
 
-function register_store_products_widget($widgets_manager) {
-    class Store_Products_Widget extends \Elementor\Widget_Base {
-        public function get_name() { return 'store_products'; }
-        public function get_title() { return __('Jewelry Store Products', 'my-custom-theme'); }
+function register_dynamic_store_products_widget($widgets_manager) {
+    class Dynamic_Store_Products_Widget extends \Elementor\Widget_Base {
+        public function get_name() { return 'dynamic_store_products'; }
+        public function get_title() { return __('Dynamic Store Products', 'my-custom-theme'); }
         public function get_icon() { return 'eicon-products-grid'; }
         public function get_categories() { return ['general']; }
 
         protected function _register_controls() {
-            $this->start_controls_section('content_section', [
-                'label' => __('Content', 'my-custom-theme'),
-                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
-            ]);
+            $this->start_controls_section(
+                'content_section',
+                [
+                    'label' => __('Content', 'my-custom-theme'),
+                    'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+                ]
+            );
 
-            $this->add_control('store', [
-                'label' => __('Select Store', 'my-custom-theme'),
-                'type' => \Elementor\Controls_Manager::SELECT2,
-                'options' => $this->get_stores(),
-                'default' => '',
-            ]);
+            $this->add_control(
+                'store_info',
+                [
+                    'label' => __('Store Selection', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::RAW_HTML,
+                    'raw' => __('Products will be dynamically displayed based on the current store page.', 'my-custom-theme'),
+                    'content_classes' => 'elementor-descriptor',
+                ]
+            );
 
-            $this->add_control('products_per_page', [
-                'label' => __('Products Per Page', 'my-custom-theme'),
-                'type' => \Elementor\Controls_Manager::NUMBER,
-                'default' => 6,
-            ]);
+            $this->add_control(
+                'products_per_page',
+                [
+                    'label' => __('Products Per Page', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::NUMBER,
+                    'default' => 6,
+                ]
+            );
 
             $this->add_control(
                 'layout_style',
@@ -131,6 +140,7 @@ function register_store_products_widget($widgets_manager) {
 
             $this->end_controls_section();
 
+            // Style Section
             $this->start_controls_section(
                 'style_section',
                 [
@@ -287,6 +297,7 @@ function register_store_products_widget($widgets_manager) {
 
             $this->end_controls_section();
 
+            // Pagination Style Section
             $this->start_controls_section(
                 'pagination_style_section',
                 [
@@ -356,20 +367,13 @@ function register_store_products_widget($widgets_manager) {
             $this->end_controls_section();
         }
 
-        private function get_stores() {
-            $stores = get_posts(['post_type' => 'store', 'posts_per_page' => -1]);
-            $options = ['' => __('Select a store', 'my-custom-theme')];
-            foreach ($stores as $store) {
-                $options[$store->ID] = $store->post_title;
-            }
-            return $options;
-        }
-
         protected function render() {
             $settings = $this->get_settings_for_display();
 
-            if (empty($settings['store'])) {
-                echo __('Please select a store.', 'my-custom-theme');
+            $store_id = $this->get_current_store_id();
+
+            if (!$store_id) {
+                echo __('This widget can only be used on a store page.', 'my-custom-theme');
                 return;
             }
 
@@ -378,11 +382,11 @@ function register_store_products_widget($widgets_manager) {
                 'post_type' => 'product',
                 'posts_per_page' => $settings['products_per_page'],
                 'paged' => $paged,
-                'meta_query' => [['key' => '_associated_store', 'value' => $settings['store'], 'compare' => '=']],
+                'meta_query' => [['key' => '_associated_store', 'value' => $store_id, 'compare' => '=']],
             ]);
 
             if ($products->have_posts()) {
-				echo '<div class="store-products elementor-grid">';
+                echo '<div class="store-products elementor-grid">';
                 while ($products->have_posts()) {
                     $products->the_post();
                     $this->render_product_item($settings);
@@ -404,6 +408,23 @@ function register_store_products_widget($widgets_manager) {
             } else {
                 echo __('No products found for this store.', 'my-custom-theme');
             }
+        }
+
+        private function get_current_store_id() {
+            // 根据您的网站结构来实现这个方法
+            // 例如，如果您在商店页面使用自定义文章类型：
+            if (is_singular('store')) {
+                return get_the_ID();
+            }
+            
+            // 或者，如果您使用类别来组织商店：
+            // if (is_tax('store_category')) {
+            //     $term = get_queried_object();
+            //     return $term->term_id;
+            // }
+
+            // 如果都不是，返回 null
+            return null;
         }
 
         private function render_product_item($settings) {
@@ -431,13 +452,13 @@ function register_store_products_widget($widgets_manager) {
         }
     }
 
-    $widgets_manager->register_widget_type(new Store_Products_Widget());
+    $widgets_manager->register_widget_type(new Dynamic_Store_Products_Widget());
 }
 
 // Add layout styles
-add_action('wp_head', 'add_store_products_layout_styles');
+add_action('wp_head', 'add_dynamic_store_products_layout_styles');
 
-function add_store_products_layout_styles() {
+function add_dynamic_store_products_layout_styles() {
     ?>
     <style>
         .store-products {
