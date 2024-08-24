@@ -58,85 +58,89 @@ function register_dynamic_store_coupons_widget() {
 
             $this->end_controls_section();
 
-            // Field Mapping
+            // Layout Section
             $this->start_controls_section(
-                'field_mapping_section',
+                'layout_section',
                 [
-                    'label' => __('Field Mapping', 'my-custom-theme'),
+                    'label' => __('Layout', 'my-custom-theme'),
                     'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                 ]
             );
 
-            $coupon_fields = $this->get_acf_coupon_fields();
-
             $repeater = new \Elementor\Repeater();
 
             $repeater->add_control(
-                'field_label',
+                'part_name',
                 [
-                    'label' => __('Field Label', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::TEXT,
-                    'default' => __('New Field', 'my-custom-theme'),
-                ]
-            );
-
-            $repeater->add_control(
-                'field_key',
-                [
-                    'label' => __('Field Key', 'my-custom-theme'),
+                    'label' => __('Part Name', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::SELECT,
-                    'options' => $coupon_fields,
-                ]
-            );
-
-            $repeater->add_control(
-                'field_type',
-                [
-                    'label' => __('Field Type', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SELECT,
-                    'default' => 'text',
+                    'default' => 'left',
                     'options' => [
-                        'text' => __('Text', 'my-custom-theme'),
-                        'link' => __('Link', 'my-custom-theme'),
-                        'image' => __('Image', 'my-custom-theme'),
+                        'left' => __('Left', 'my-custom-theme'),
+                        'center' => __('Center', 'my-custom-theme'),
+                        'right' => __('Right', 'my-custom-theme'),
+                    ],
+                ]
+            );
+
+            $repeater->add_control(
+                'fields',
+                [
+                    'label' => __('Fields', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::REPEATER,
+                    'fields' => [
+                        [
+                            'name' => 'field_key',
+                            'label' => __('Field', 'my-custom-theme'),
+                            'type' => \Elementor\Controls_Manager::SELECT,
+                            'options' => $this->get_coupon_fields(),
+                        ],
+                        [
+                            'name' => 'field_type',
+                            'label' => __('Field Type', 'my-custom-theme'),
+                            'type' => \Elementor\Controls_Manager::SELECT,
+                            'default' => 'text',
+                            'options' => [
+                                'text' => __('Text', 'my-custom-theme'),
+                                'link' => __('Link', 'my-custom-theme'),
+                                'image' => __('Image', 'my-custom-theme'),
+                                'percentage' => __('Percentage', 'my-custom-theme'),
+                                'button' => __('Button', 'my-custom-theme'),
+                            ],
+                        ],
                     ],
                 ]
             );
 
             $this->add_control(
-                'coupon_fields',
+                'layout_parts',
                 [
-                    'label' => __('Coupon Fields', 'my-custom-theme'),
+                    'label' => __('Layout Parts', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::REPEATER,
                     'fields' => $repeater->get_controls(),
                     'default' => [
                         [
-                            'field_label' => __('Discount Percentage', 'my-custom-theme'),
-                            'field_key' => 'percentage',
-                            'field_type' => 'text',
+                            'part_name' => 'left',
+                            'fields' => [
+                                ['field_key' => 'percentage', 'field_type' => 'percentage'],
+                            ],
                         ],
                         [
-                            'field_label' => __('Button Text', 'my-custom-theme'),
-                            'field_key' => 'button_text1',
-                            'field_type' => 'text',
+                            'part_name' => 'center',
+                            'fields' => [
+                                ['field_key' => 'coupon_terms_button', 'field_type' => 'text'],
+                                ['field_key' => 'title', 'field_type' => 'text'],
+                                ['field_key' => 'description', 'field_type' => 'text'],
+                            ],
                         ],
                         [
-                            'field_label' => __('Button Link', 'my-custom-theme'),
-                            'field_key' => 'coupon__Button_Link',
-                            'field_type' => 'link',
-                        ],
-                        [
-                            'field_label' => __('Terms Button', 'my-custom-theme'),
-                            'field_key' => 'coupon_terms_button',
-                            'field_type' => 'text',
-                        ],
-                        [
-                            'field_label' => __('Terms Accordion', 'my-custom-theme'),
-                            'field_key' => 'coupon_terms_accordion',
-                            'field_type' => 'text',
+                            'part_name' => 'right',
+                            'fields' => [
+                                ['field_key' => 'button_text1', 'field_type' => 'button'],
+                            ],
                         ],
                     ],
-                    'title_field' => '{{{ field_label }}}',
+                    'title_field' => '{{{ part_name }}}',
                 ]
             );
 
@@ -174,44 +178,21 @@ function register_dynamic_store_coupons_widget() {
         }
 
         private function render_coupon_item($coupon_id, $settings) {
-            $coupon_data = [
-                'title' => get_the_title($coupon_id),
-                'description' => get_the_content(null, false, $coupon_id),
-            ];
-
-            foreach ($settings['coupon_fields'] as $field) {
-                $field_value = get_field($field['field_key'], $coupon_id);
-                $coupon_data[$field['field_key']] = $field_value;
-            }
-
+            $coupon_data = $this->get_coupon_data($coupon_id);
             $template_class = $settings['template'] === 'retailmenot' ? 'retailmenot-template' : 'styleless-template';
 
             ?>
             <div class="coupon-item <?php echo esc_attr($template_class); ?>">
                 <div class="coupon-content">
-                    <div class="coupon-left">
-                        <?php if (!empty($coupon_data['percentage'])): ?>
-                            <div class="discount-percentage">
-                                <span class="up-to">UP TO</span>
-                                <span class="percentage"><?php echo esc_html($coupon_data['percentage']); ?></span>
-                                <span class="off">OFF</span>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="coupon-center">
-                        <?php if (!empty($coupon_data['coupon_terms_button'])): ?>
-                            <div class="terms-button"><?php echo esc_html($coupon_data['coupon_terms_button']); ?></div>
-                        <?php endif; ?>
-                        <div class="coupon-title"><?php echo esc_html($coupon_data['title']); ?></div>
-                        <?php if (!empty($coupon_data['description'])): ?>
-                            <div class="coupon-description"><?php echo wp_kses_post($coupon_data['description']); ?></div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="coupon-right">
-                        <?php if (!empty($coupon_data['button_text1'])): ?>
-                            <a href="<?php echo esc_url($coupon_data['coupon__Button_Link']); ?>" class="coupon-button"><?php echo esc_html($coupon_data['button_text1']); ?></a>
-                        <?php endif; ?>
-                    </div>
+                    <?php
+                    foreach ($settings['layout_parts'] as $part) {
+                        echo '<div class="coupon-' . esc_attr($part['part_name']) . '">';
+                        foreach ($part['fields'] as $field) {
+                            $this->render_field($field['field_key'], $field['field_type'], $coupon_data);
+                        }
+                        echo '</div>';
+                    }
+                    ?>
                 </div>
                 <?php if (!empty($coupon_data['coupon_terms_accordion'])): ?>
                     <div class="coupon-details">
@@ -226,8 +207,63 @@ function register_dynamic_store_coupons_widget() {
             <?php
         }
 
-        private function get_acf_coupon_fields() {
-            $fields = ['' => __('Select Field', 'my-custom-theme')];
+        private function get_coupon_data($coupon_id) {
+            $coupon_data = [
+                'title' => get_the_title($coupon_id),
+                'description' => get_the_content(null, false, $coupon_id),
+            ];
+
+            $fields = $this->get_coupon_fields();
+            foreach ($fields as $field_key => $field_label) {
+                if ($field_key !== 'title' && $field_key !== 'description') {
+                    $coupon_data[$field_key] = get_field($field_key, $coupon_id);
+                }
+            }
+
+            return $coupon_data;
+        }
+
+        private function render_field($field_key, $field_type, $coupon_data) {
+            $value = isset($coupon_data[$field_key]) ? $coupon_data[$field_key] : '';
+
+            switch ($field_type) {
+                case 'text':
+                    if ($field_key === 'title') {
+                        echo '<h3 class="coupon-' . esc_attr($field_key) . '">' . esc_html($value) . '</h3>';
+                    } elseif ($field_key === 'description') {
+                        echo '<div class="coupon-' . esc_attr($field_key) . '">' . wp_kses_post($value) . '</div>';
+                    } else {
+                        echo '<div class="coupon-' . esc_attr($field_key) . '">' . esc_html($value) . '</div>';
+                    }
+                    break;
+                case 'link':
+                    echo '<a href="' . esc_url($value) . '" class="coupon-' . esc_attr($field_key) . '">' . esc_html($field_key) . '</a>';
+                    break;
+                case 'image':
+                    echo '<img src="' . esc_url($value) . '" alt="' . esc_attr($field_key) . '" class="coupon-' . esc_attr($field_key) . '">';
+                    break;
+                case 'percentage':
+                    if (!empty($value)) {
+                        echo '<div class="discount-percentage">';
+                        echo '<span class="up-to">UP TO</span>';
+                        echo '<span class="percentage">' . esc_html($value) . '</span>';
+                        echo '<span class="off">OFF</span>';
+                        echo '</div>';
+                    }
+                    break;
+                case 'button':
+                    $link = isset($coupon_data['coupon__Button_Link']) ? $coupon_data['coupon__Button_Link'] : '#';
+                    echo '<a href="' . esc_url($link) . '" class="coupon-button">' . esc_html($value) . '</a>';
+                    break;
+                // Add more field types as needed
+            }
+        }
+
+        private function get_coupon_fields() {
+            $fields = [
+                'title' => __('Title', 'my-custom-theme'),
+                'description' => __('Description', 'my-custom-theme'),
+            ];
             
             if (function_exists('acf_get_field_groups') && function_exists('acf_get_fields')) {
                 $field_groups = acf_get_field_groups(['post_type' => 'coupon']);
@@ -270,17 +306,19 @@ add_action('wp_head', function () {
         align-items: center;
         padding: 20px;
     }
+    .coupon-item.retailmenot-template .coupon-left,
+    .coupon-item.retailmenot-template .coupon-center,
+    .coupon-item.retailmenot-template .coupon-right {
+        padding: 10px;
+    }
     .coupon-item.retailmenot-template .coupon-left {
         flex: 0 0 auto;
-        margin-right: 20px;
     }
     .coupon-item.retailmenot-template .coupon-center {
         flex: 1;
-        margin-left: 20px;
     }
     .coupon-item.retailmenot-template .coupon-right {
         flex: 0 0 auto;
-        margin-left: 20px;
     }
     .coupon-item.retailmenot-template .discount-percentage {
         text-align: center;
@@ -356,42 +394,42 @@ add_action('wp_head', function () {
             align-items: flex-start;
         }
         .coupon-item.retailmenot-template .coupon-left,
-        .coupon-item.retailmenot-template .coupon-right {
-            margin: 10px 0;
-        }
+        .coupon-item.retailmenot-template .coupon-right,
         .coupon-item.retailmenot-template .coupon-center {
-            margin-left: 0;
+            width: 100%;
+            margin: 10px 0;
         }
     }
     </style>
     <?php
 });
+
 // Add JavaScript
 add_action('wp_footer', function () {
     ?>
     <script>
-   jQuery(document).ready(function($) {
-    $('.coupon-item.retailmenot-template').on('click', '.see-details', function(e) {
-        e.preventDefault();
-        var $this = $(this);
-        var $termsAccordion = $this.siblings('.terms-accordion');
-        var $icon = $this.find('.details-icon');
-        
-        $termsAccordion.slideToggle(300, function() {
-            if ($termsAccordion.is(':visible')) {
-                $icon.text('-');
-                $this.contents().filter(function() {
-                    return this.nodeType === 3;
-                }).first().replaceWith('Hide Details ');
-            } else {
-                $icon.text('+');
-                $this.contents().filter(function() {
-                    return this.nodeType === 3;
-                }).first().replaceWith('See Details ');
-            }
+    jQuery(document).ready(function($) {
+        $('.coupon-item.retailmenot-template').on('click', '.see-details', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $termsAccordion = $this.siblings('.terms-accordion');
+            var $icon = $this.find('.details-icon');
+            
+            $termsAccordion.slideToggle(300, function() {
+                if ($termsAccordion.is(':visible')) {
+                    $icon.text('-');
+                    $this.contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).first().replaceWith('Hide Details ');
+                } else {
+                    $icon.text('+');
+                    $this.contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).first().replaceWith('See Details ');
+                }
+            });
         });
     });
-});
-</script>
+    </script>
     <?php
 });
