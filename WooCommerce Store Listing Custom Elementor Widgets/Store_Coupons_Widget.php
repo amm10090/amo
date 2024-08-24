@@ -145,6 +145,172 @@ function register_dynamic_store_coupons_widget() {
             );
 
             $this->end_controls_section();
+
+            // Style Section
+            $this->start_controls_section(
+                'style_section',
+                [
+                    'label' => __('Style', 'my-custom-theme'),
+                    'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+                ]
+            );
+
+            $this->add_control(
+                'custom_styles_info',
+                [
+                    'label' => __('Custom Styles', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::RAW_HTML,
+                    'raw' => __('These styles will only apply when using the "No Style" template.', 'my-custom-theme'),
+                    'content_classes' => 'elementor-descriptor',
+                ]
+            );
+
+            $this->add_control(
+                'coupon_background_color',
+                [
+                    'label' => __('Coupon Background Color', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template' => 'background-color: {{VALUE}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_group_control(
+                \Elementor\Group_Control_Border::get_type(),
+                [
+                    'name' => 'coupon_border',
+                    'label' => __('Coupon Border', 'my-custom-theme'),
+                    'selector' => '{{WRAPPER}} .coupon-item.styleless-template',
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_control(
+                'coupon_border_radius',
+                [
+                    'label' => __('Coupon Border Radius', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                    'size_units' => ['px', '%'],
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_group_control(
+                \Elementor\Group_Control_Box_Shadow::get_type(),
+                [
+                    'name' => 'coupon_box_shadow',
+                    'label' => __('Coupon Box Shadow', 'my-custom-theme'),
+                    'selector' => '{{WRAPPER}} .coupon-item.styleless-template',
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_control(
+                'title_color',
+                [
+                    'label' => __('Title Color', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template .coupon-title' => 'color: {{VALUE}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_group_control(
+                \Elementor\Group_Control_Typography::get_type(),
+                [
+                    'name' => 'title_typography',
+                    'label' => __('Title Typography', 'my-custom-theme'),
+                    'selector' => '{{WRAPPER}} .coupon-item.styleless-template .coupon-title',
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_control(
+                'description_color',
+                [
+                    'label' => __('Description Color', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template .coupon-description' => 'color: {{VALUE}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_group_control(
+                \Elementor\Group_Control_Typography::get_type(),
+                [
+                    'name' => 'description_typography',
+                    'label' => __('Description Typography', 'my-custom-theme'),
+                    'selector' => '{{WRAPPER}} .coupon-item.styleless-template .coupon-description',
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_control(
+                'button_background_color',
+                [
+                    'label' => __('Button Background Color', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template .coupon-button' => 'background-color: {{VALUE}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_control(
+                'button_text_color',
+                [
+                    'label' => __('Button Text Color', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::COLOR,
+                    'selectors' => [
+                        '{{WRAPPER}} .coupon-item.styleless-template .coupon-button' => 'color: {{VALUE}};',
+                    ],
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->add_group_control(
+                \Elementor\Group_Control_Typography::get_type(),
+                [
+                    'name' => 'button_typography',
+                    'label' => __('Button Typography', 'my-custom-theme'),
+                    'selector' => '{{WRAPPER}} .coupon-item.styleless-template .coupon-button',
+                    'condition' => [
+                        'template' => 'styleless',
+                    ],
+                ]
+            );
+
+            $this->end_controls_section();
         }
 
         protected function render() {
@@ -188,7 +354,7 @@ function register_dynamic_store_coupons_widget() {
                     foreach ($settings['layout_parts'] as $part) {
                         echo '<div class="coupon-' . esc_attr($part['part_name']) . '">';
                         foreach ($part['fields'] as $field) {
-                            $this->render_field($field['field_key'], $field['field_type'], $coupon_data);
+                            $this->render_field($field['field_key'], $field['field_type'], $coupon_data, $settings);
                         }
                         echo '</div>';
                     }
@@ -223,28 +389,29 @@ function register_dynamic_store_coupons_widget() {
             return $coupon_data;
         }
 
-        private function render_field($field_key, $field_type, $coupon_data) {
+        private function render_field($field_key, $field_type, $coupon_data, $settings) {
             $value = isset($coupon_data[$field_key]) ? $coupon_data[$field_key] : '';
+            $style = $settings['template'] === 'styleless' ? $this->get_field_style($field_key, $field_type, $settings) : '';
 
             switch ($field_type) {
                 case 'text':
                     if ($field_key === 'title') {
-                        echo '<h3 class="coupon-' . esc_attr($field_key) . '">' . esc_html($value) . '</h3>';
+                        echo '<h3 class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . esc_html($value) . '</h3>';
                     } elseif ($field_key === 'description') {
-                        echo '<div class="coupon-' . esc_attr($field_key) . '">' . wp_kses_post($value) . '</div>';
+                        echo '<div class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . wp_kses_post($value) . '</div>';
                     } else {
-                        echo '<div class="coupon-' . esc_attr($field_key) . '">' . esc_html($value) . '</div>';
+                        echo '<div class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . esc_html($value) . '</div>';
                     }
                     break;
                 case 'link':
-                    echo '<a href="' . esc_url($value) . '" class="coupon-' . esc_attr($field_key) . '">' . esc_html($field_key) . '</a>';
+                    echo '<a href="' . esc_url($value) . '" class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . esc_html($field_key) . '</a>';
                     break;
                 case 'image':
-                    echo '<img src="' . esc_url($value) . '" alt="' . esc_attr($field_key) . '" class="coupon-' . esc_attr($field_key) . '">';
+                    echo '<img src="' . esc_url($value) . '" alt="' . esc_attr($field_key) . '" class="coupon-' . esc_attr($field_key) . '" ' . $style . '>';
                     break;
                 case 'percentage':
                     if (!empty($value)) {
-                        echo '<div class="discount-percentage">';
+                        echo '<div class="discount-percentage" ' . $style . '>';
                         echo '<span class="up-to">UP TO</span>';
                         echo '<span class="percentage">' . esc_html($value) . '</span>';
                         echo '<span class="off">OFF</span>';
@@ -253,10 +420,29 @@ function register_dynamic_store_coupons_widget() {
                     break;
                 case 'button':
                     $link = isset($coupon_data['coupon__Button_Link']) ? $coupon_data['coupon__Button_Link'] : '#';
-                    echo '<a href="' . esc_url($link) . '" class="coupon-button">' . esc_html($value) . '</a>';
+                    echo '<a href="' . esc_url($link) . '" class="coupon-button" ' . $style . '>' . esc_html($value) . '</a>';
                     break;
-                // Add more field types as needed
             }
+        }
+
+        private function get_field_style($field_key, $field_type, $settings) {
+            $style = '';
+
+            switch ($field_type) {
+                case 'text':
+                    if ($field_key === 'title') {
+                        $style .= 'color: ' . $settings['title_color'] . ';';
+                    } elseif ($field_key === 'description') {
+                        $style .= 'color: ' . $settings['description_color'] . ';';
+                    }
+                    break;
+                case 'button':
+                    $style .= 'background-color: ' . $settings['button_background_color'] . ';';
+                    $style .= 'color: ' . $settings['button_text_color'] . ';';
+                    break;
+            }
+
+            return $style ? 'style="' . esc_attr($style) . '"' : '';
         }
 
         private function get_coupon_fields() {
@@ -409,7 +595,7 @@ add_action('wp_footer', function () {
     ?>
     <script>
     jQuery(document).ready(function($) {
-        $('.coupon-item.retailmenot-template').on('click', '.see-details', function(e) {
+        $('.coupon-item').on('click', '.see-details', function(e) {
             e.preventDefault();
             var $this = $(this);
             var $termsAccordion = $this.siblings('.terms-accordion');
