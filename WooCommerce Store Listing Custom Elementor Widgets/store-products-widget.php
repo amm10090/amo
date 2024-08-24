@@ -1,20 +1,34 @@
+<?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-// Register Dynamic Store Products Widget
-add_action('elementor/widgets/widgets_registered', 'register_dynamic_store_products_widget');
+function register_dynamic_store_coupons_widget() {
+    if (!did_action('elementor/loaded')) {
+        return;
+    }
 
-function register_dynamic_store_products_widget($widgets_manager) {
-    class Dynamic_Store_Products_Widget extends \Elementor\Widget_Base {
-        public function get_name() { return 'dynamic_store_products'; }
-        public function get_title() { return __('Dynamic Store Products', 'my-custom-theme'); }
-        public function get_icon() { return 'eicon-products-grid'; }
-        public function get_categories() { return ['general']; }
+    class Dynamic_Store_Coupons_Widget extends \Elementor\Widget_Base {
+        public function get_name() {
+            return 'dynamic_store_coupons';
+        }
 
-        protected function _register_controls() {
+        public function get_title() {
+            return __('动态商店优惠券', 'my-custom-theme');
+        }
+
+        public function get_icon() {
+            return 'eicon-coupon';
+        }
+
+        public function get_categories() {
+            return ['general'];
+        }
+
+        protected function register_controls() {
+            // 内容设置
             $this->start_controls_section(
                 'content_section',
                 [
-                    'label' => __('Content', 'my-custom-theme'),
+                    'label' => __('内容设置', 'my-custom-theme'),
                     'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                 ]
             );
@@ -22,345 +36,79 @@ function register_dynamic_store_products_widget($widgets_manager) {
             $this->add_control(
                 'store_info',
                 [
-                    'label' => __('Store Selection', 'my-custom-theme'),
+                    'label' => __('商店选择', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::RAW_HTML,
-                    'raw' => __('Products will be dynamically displayed based on the current store page.', 'my-custom-theme'),
+                    'raw' => __('优惠券将根据当前商店页面动态显示。', 'my-custom-theme'),
                     'content_classes' => 'elementor-descriptor',
                 ]
             );
 
             $this->add_control(
-                'products_per_page',
+                'template',
                 [
-                    'label' => __('Products Per Page', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::NUMBER,
-                    'default' => 6,
-                ]
-            );
-
-            $this->add_control(
-                'layout_style',
-                [
-                    'label' => __('Layout Style', 'my-custom-theme'),
+                    'label' => __('模板', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::SELECT,
-                    'default' => 'grid',
+                    'default' => 'retailmenot',
                     'options' => [
-                        'grid' => __('Grid', 'my-custom-theme'),
-                        'list' => __('List', 'my-custom-theme'),
-                    ],
-                    'prefix_class' => 'product-layout-',
-                ]
-            );
-
-            $this->add_responsive_control(
-                'columns',
-                [
-                    'label' => __('Columns', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SELECT,
-                    'default' => '3',
-                    'tablet_default' => '2',
-                    'mobile_default' => '1',
-                    'options' => [
-                        '1' => '1',
-                        '2' => '2',
-                        '3' => '3',
-                        '4' => '4',
-                        '5' => '5',
-                        '6' => '6',
-                    ],
-                    'prefix_class' => 'elementor-grid%s-',
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
-                    ],
-                    'condition' => [
-                        'layout_style' => 'grid',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'show_product_name',
-                [
-                    'label' => __('Show Product Name', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SWITCHER,
-                    'label_on' => __('Show', 'my-custom-theme'),
-                    'label_off' => __('Hide', 'my-custom-theme'),
-                    'return_value' => 'yes',
-                    'default' => 'yes',
-                ]
-            );
-
-            $this->add_control(
-                'show_product_price',
-                [
-                    'label' => __('Show Product Price', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SWITCHER,
-                    'label_on' => __('Show', 'my-custom-theme'),
-                    'label_off' => __('Hide', 'my-custom-theme'),
-                    'return_value' => 'yes',
-                    'default' => 'yes',
-                ]
-            );
-
-            $this->add_control(
-                'show_product_rating',
-                [
-                    'label' => __('Show Product Rating', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SWITCHER,
-                    'label_on' => __('Show', 'my-custom-theme'),
-                    'label_off' => __('Hide', 'my-custom-theme'),
-                    'return_value' => 'yes',
-                    'default' => 'yes',
-                ]
-            );
-
-            $this->add_control(
-                'show_product_description',
-                [
-                    'label' => __('Show Product Description', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SWITCHER,
-                    'label_on' => __('Show', 'my-custom-theme'),
-                    'label_off' => __('Hide', 'my-custom-theme'),
-                    'return_value' => 'yes',
-                    'default' => 'yes',
-                ]
-            );
-
-            $this->add_control(
-                'show_pagination',
-                [
-                    'label' => __('Show Pagination', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SWITCHER,
-                    'label_on' => __('Show', 'my-custom-theme'),
-                    'label_off' => __('Hide', 'my-custom-theme'),
-                    'return_value' => 'yes',
-                    'default' => 'yes',
-                ]
-            );
-
-            $this->end_controls_section();
-
-            // Style Section
-            $this->start_controls_section(
-                'style_section',
-                [
-                    'label' => __('Product Style', 'my-custom-theme'),
-                    'tab' => \Elementor\Controls_Manager::TAB_STYLE,
-                ]
-            );
-
-            $this->add_control(
-                'product_background_color',
-                [
-                    'label' => __('Background Color', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::COLOR,
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item' => 'background-color: {{VALUE}};',
-                    ],
-                ]
-            );
-
-            $this->add_group_control(
-                \Elementor\Group_Control_Border::get_type(),
-                [
-                    'name' => 'product_border',
-                    'label' => __('Border', 'my-custom-theme'),
-                    'selector' => '{{WRAPPER}} .product-item',
-                ]
-            );
-
-            $this->add_control(
-                'product_border_radius',
-                [
-                    'label' => __('Border Radius', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                    'size_units' => ['px', '%'],
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'product_padding',
-                [
-                    'label' => __('Padding', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                    'size_units' => ['px', 'em', '%'],
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'product_spacing',
-                [
-                    'label' => __('Product Spacing', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SLIDER,
-                    'size_units' => ['px'],
-                    'range' => [
-                        'px' => [
-                            'min' => 0,
-                            'max' => 100,
-                            'step' => 1,
-                        ],
-                    ],
-                    'default' => [
-                        'unit' => 'px',
-                        'size' => 20,
-                    ],
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products' => 'gap: {{SIZE}}{{UNIT}};',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'image_size',
-                [
-                    'label' => __('Image Size', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SLIDER,
-                    'size_units' => ['px', '%'],
-                    'range' => [
-                        'px' => [
-                            'min' => 0,
-                            'max' => 1000,
-                            'step' => 5,
-                        ],
-                        '%' => [
-                            'min' => 0,
-                            'max' => 100,
-                        ],
-                    ],
-                    'default' => [
-                        'unit' => '%',
-                        'size' => 100,
-                    ],
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item img' => 'width: {{SIZE}}{{UNIT}}; height: auto;',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'product_title_color',
-                [
-                    'label' => __('Title Color', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::COLOR,
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item h3' => 'color: {{VALUE}};',
-                    ],
-                    'condition' => [
-                        'show_product_name' => 'yes',
-                    ],
-                ]
-            );
-
-            $this->add_group_control(
-                \Elementor\Group_Control_Typography::get_type(),
-                [
-                    'name' => 'product_title_typography',
-                    'label' => __('Title Typography', 'my-custom-theme'),
-                    'selector' => '{{WRAPPER}} .product-item h3',
-                    'condition' => [
-                        'show_product_name' => 'yes',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'product_price_color',
-                [
-                    'label' => __('Price Color', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::COLOR,
-                    'selectors' => [
-                        '{{WRAPPER}} .product-item .price' => 'color: {{VALUE}};',
-                    ],
-                    'condition' => [
-                        'show_product_price' => 'yes',
-                    ],
-                ]
-            );
-
-            $this->add_group_control(
-                \Elementor\Group_Control_Typography::get_type(),
-                [
-                    'name' => 'product_price_typography',
-                    'label' => __('Price Typography', 'my-custom-theme'),
-                    'selector' => '{{WRAPPER}} .product-item .price',
-                    'condition' => [
-                        'show_product_price' => 'yes',
+                        'retailmenot' => __('RetailMeNot风格', 'my-custom-theme'),
+                        'styleless' => __('无样式', 'my-custom-theme'),
                     ],
                 ]
             );
 
             $this->end_controls_section();
 
-            // Pagination Style Section
+            // 字段映射
             $this->start_controls_section(
-                'pagination_style_section',
+                'field_mapping_section',
                 [
-                    'label' => __('Pagination Style', 'my-custom-theme'),
-                    'tab' => \Elementor\Controls_Manager::TAB_STYLE,
-                    'condition' => [
-                        'show_pagination' => 'yes',
-                    ],
+                    'label' => __('字段映射', 'my-custom-theme'),
+                    'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                 ]
             );
 
+            $coupon_fields = $this->get_acf_coupon_fields();
+
+            $default_fields = [
+                'percentage' => __('优惠百分比', 'my-custom-theme'),
+                'button_text' => __('按钮文本', 'my-custom-theme'),
+                'button_link' => __('按钮链接', 'my-custom-theme'),
+                'terms_button' => __('条款按钮', 'my-custom-theme'),
+                'terms_accordion' => __('条款手风琴', 'my-custom-theme'),
+            ];
+
+            foreach ($default_fields as $field_key => $field_label) {
+                $this->add_control(
+                    $field_key . '_field',
+                    [
+                        'label' => $field_label,
+                        'type' => \Elementor\Controls_Manager::SELECT,
+                        'options' => $coupon_fields,
+                        'default' => $field_key,
+                    ]
+                );
+            }
+
+            // 自定义字段
             $this->add_control(
-                'pagination_color',
+                'custom_fields',
                 [
-                    'label' => __('Text Color', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::COLOR,
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products-pagination .page-numbers' => 'color: {{VALUE}};',
+                    'label' => __('自定义字段', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::REPEATER,
+                    'fields' => [
+                        [
+                            'name' => 'field_label',
+                            'label' => __('字段标签', 'my-custom-theme'),
+                            'type' => \Elementor\Controls_Manager::TEXT,
+                        ],
+                        [
+                            'name' => 'field_key',
+                            'label' => __('字段名称', 'my-custom-theme'),
+                            'type' => \Elementor\Controls_Manager::SELECT,
+                            'options' => $coupon_fields,
+                        ],
                     ],
-                ]
-            );
-
-            $this->add_control(
-                'pagination_background_color',
-                [
-                    'label' => __('Background Color', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::COLOR,
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products-pagination .page-numbers' => 'background-color: {{VALUE}};',
-                    ],
-                ]
-            );
-
-            $this->add_group_control(
-                \Elementor\Group_Control_Typography::get_type(),
-                [
-                    'name' => 'pagination_typography',
-                    'label' => __('Typography', 'my-custom-theme'),
-                    'selector' => '{{WRAPPER}} .store-products-pagination .page-numbers',
-                ]
-            );
-
-            $this->add_control(
-                'pagination_padding',
-                [
-                    'label' => __('Padding', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                    'size_units' => ['px', 'em', '%'],
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products-pagination .page-numbers' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                    ],
-                ]
-            );
-
-            $this->add_control(
-                'pagination_border_radius',
-                [
-                    'label' => __('Border Radius', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                    'size_units' => ['px', '%'],
-                    'selectors' => [
-                        '{{WRAPPER}} .store-products-pagination .page-numbers' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                    ],
+                    'title_field' => '{{{ field_label }}}',
                 ]
             );
 
@@ -369,188 +117,257 @@ function register_dynamic_store_products_widget($widgets_manager) {
 
         protected function render() {
             $settings = $this->get_settings_for_display();
-
             $store_id = $this->get_current_store_id();
 
             if (!$store_id) {
-                echo __('This widget can only be used on a store page.', 'my-custom-theme');
+                echo __('此小部件只能在商店页面上使用。', 'my-custom-theme');
                 return;
             }
 
-            $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-            $products = new WP_Query([
-                'post_type' => 'product',
-                'posts_per_page' => $settings['products_per_page'],
-                'paged' => $paged,
-                'meta_query' => [['key' => '_associated_store', 'value' => $store_id, 'compare' => '=']],
-            ]);
+            $coupons = get_field('select_coupon', $store_id);
 
-            if ($products->have_posts()) {
-                echo '<div class="store-products elementor-grid">';
-                while ($products->have_posts()) {
-                    $products->the_post();
-                    $this->render_product_item($settings);
-                }
-                echo '</div>';
-
-                if ('yes' === $settings['show_pagination']) {
-                    echo '<div class="store-products-pagination">';
-                    echo paginate_links([
-                        'total' => $products->max_num_pages,
-                        'current' => $paged,
-                        'prev_text' => __('&laquo; Previous', 'my-custom-theme'),
-                        'next_text' => __('Next &raquo;', 'my-custom-theme'),
-                    ]);
-                    echo '</div>';
-                }
-
-                wp_reset_postdata();
-            } else {
-                echo __('No products found for this store.', 'my-custom-theme');
+            if (!$coupons || empty($coupons)) {
+                echo __('未找到该商店的优惠券。', 'my-custom-theme');
+                return;
             }
+
+            echo '<div class="store-coupons ' . esc_attr($settings['template']) . '-template">';
+            foreach ($coupons as $coupon_id) {
+                $this->render_coupon_item($coupon_id, $settings);
+            }
+            echo '</div>';
         }
 
         private function get_current_store_id() {
-            // 根据您的网站结构来实现这个方法
-            // 例如，如果您在商店页面使用自定义文章类型：
             if (is_singular('store')) {
                 return get_the_ID();
             }
-            
-            // 或者，如果您使用类别来组织商店：
-            // if (is_tax('store_category')) {
-            //     $term = get_queried_object();
-            //     return $term->term_id;
-            // }
-
-            // 如果都不是，返回 null
             return null;
         }
 
-        private function render_product_item($settings) {
-            $product = wc_get_product(get_the_ID());
-            $product_url = get_permalink();
+        private function render_coupon_item($coupon_id, $settings) {
+            $percentage = get_field($settings['percentage_field'], $coupon_id);
+            $coupon_title = get_the_title($coupon_id);
+            $coupon_description = get_the_content(null, false, $coupon_id);
+            $button_text = get_field($settings['button_text_field'], $coupon_id);
+            $button_text = !empty($button_text) ? $button_text : __('获取优惠', 'my-custom-theme');
+            $coupon_button_link = get_field($settings['button_link_field'], $coupon_id);
+            $coupon_terms_button = get_field($settings['terms_button_field'], $coupon_id);
+            $coupon_terms_accordion = get_field($settings['terms_accordion_field'], $coupon_id);
+
             ?>
-            <div class="product-item">
-                <a href="<?php echo esc_url($product_url); ?>">
-                    <?php echo $product->get_image(); ?>
-                    <?php if ('yes' === $settings['show_product_name']) : ?>
-                        <h3><?php echo $product->get_name(); ?></h3>
-                    <?php endif; ?>
-                    <?php if ('yes' === $settings['show_product_price']) : ?>
-                        <span class="price"><?php echo $product->get_price_html(); ?></span>
-                    <?php endif; ?>
-                    <?php if ('yes' === $settings['show_product_rating']) : ?>
-                        <div class="star-rating"><?php echo wc_get_rating_html($product->get_average_rating()); ?></div>
-                    <?php endif; ?>
-                    <?php if ('yes' === $settings['show_product_description']) : ?>
-                        <p class="product-short-description"><?php echo wp_trim_words($product->get_short_description(), 20); ?></p>
-                    <?php endif; ?>
-                </a>
+            <div class="coupon-item">
+                <div class="coupon-content">
+                    <div class="coupon-left">
+                        <?php if (!empty($percentage)): ?>
+                            <div class="coupon-percentage"><?php echo esc_html($percentage); ?></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="coupon-center">
+                        <?php if (!empty($coupon_terms_button)): ?>
+                            <span class="coupon-selection-button"><?php echo esc_html($coupon_terms_button); ?></span>
+                        <?php endif; ?>
+                        <div class="coupon-title"><?php echo esc_html($coupon_title); ?></div>
+                        <?php if (!empty($coupon_description)): ?>
+                            <div class="coupon-description"><?php echo wp_kses_post($coupon_description); ?></div>
+                        <?php endif; ?>
+                        <?php $this->render_custom_fields($coupon_id, $settings); ?>
+                    </div>
+                    <div class="coupon-right">
+                        <?php if (!empty($button_text)): ?>
+                            <a href="<?php echo esc_url($coupon_button_link); ?>" class="coupon-button" target="_blank"><?php echo esc_html($button_text); ?></a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php if (!empty($coupon_terms_accordion)): ?>
+                    <div class="coupon-footer">
+                        <a href="#" class="see-details">
+                            <?php echo __('查看详情', 'my-custom-theme'); ?> <span class="details-icon">+</span>
+                        </a>
+                    </div>
+                    <div class="coupon-details" style="display:none;">
+                        <?php echo wp_kses_post($coupon_terms_accordion); ?>
+                    </div>
+                <?php endif; ?>
             </div>
             <?php
         }
+
+        private function render_custom_fields($coupon_id, $settings) {
+            if (empty($settings['custom_fields'])) {
+                return;
+            }
+
+            echo '<div class="custom-fields">';
+            foreach ($settings['custom_fields'] as $custom_field) {
+                $field_value = get_field($custom_field['field_key'], $coupon_id);
+                if (!empty($field_value)) {
+                    echo '<div class="custom-field custom-field-' . esc_attr($custom_field['field_key']) . '">';
+                    echo '<span class="custom-field-label">' . esc_html($custom_field['field_label']) . ': </span>';
+                    echo '<span class="custom-field-value">' . esc_html($field_value) . '</span>';
+                    echo '</div>';
+                }
+            }
+            echo '</div>';
+        }
+
+        private function get_acf_coupon_fields() {
+            $fields = [];
+            if (function_exists('acf_get_field_groups')) {
+                $field_groups = acf_get_field_groups(['post_type' => 'coupon']);
+                foreach ($field_groups as $field_group) {
+                    $group_fields = acf_get_fields($field_group);
+                    foreach ($group_fields as $field) {
+                        $fields[$field['name']] = $field['label'];
+                    }
+                }
+            }
+            return $fields;
+        }
     }
 
-    $widgets_manager->register_widget_type(new Dynamic_Store_Products_Widget());
+    \Elementor\Plugin::instance()->widgets_manager->register(new Dynamic_Store_Coupons_Widget());
 }
 
-// Add layout styles
-add_action('wp_head', 'add_dynamic_store_products_layout_styles');
+add_action('elementor/widgets/register', 'register_dynamic_store_coupons_widget');
 
-function add_dynamic_store_products_layout_styles() {
+// 添加样式
+add_action('wp_head', function () {
     ?>
     <style>
-        .store-products {
-            display: grid;
-            gap: 20px;
+        .store-coupons.retailmenot-template {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
         }
-
-        .product-layout-list .store-products {
-            grid-template-columns: 1fr !important;
-        }
-
-        .product-item {
-            padding: 15px;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .product-item:hover {
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .product-item a {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .product-item img {
-            width: 100%;
-            height: auto;
+        .retailmenot-template .coupon-item {
+            border: 1px solid #e0e0e0;
             border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .retailmenot-template .coupon-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .retailmenot-template .coupon-left {
+            flex: 0 0 30%;
             margin-bottom: 10px;
-            transition: transform 0.3s ease;
         }
-
-        .product-item:hover img {
-            transform: scale(1.05);
+        .retailmenot-template .coupon-center {
+            flex: 1;
+            padding: 0 20px;
         }
-
-        .product-item h3 {
-            margin: 10px 0 5px;
-            font-size: 18px;
+        .retailmenot-template .coupon-right {
+            flex: 0 0 auto;
+            text-align: right;
         }
-
-        .product-item .price {
-            display: block;
-            margin-bottom: 10px;
+        .retailmenot-template .coupon-percentage {
+            font-size: 24px;
             font-weight: bold;
-            color: #333;
+            color: #6c0ab7;
         }
-
-        .product-item .star-rating {
-            margin: 5px auto;
-        }
-
-        .product-item .product-short-description {
+        .retailmenot-template .coupon-selection-button {
+            display: inline-block;
+            background-color: #6c0ab7;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 4px;
             font-size: 14px;
-            color: #666;
+            font-weight: bold;
             margin-bottom: 10px;
         }
-
-        .store-products-pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .store-products-pagination .page-numbers {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 0 2px;
-            text-decoration: none;
-            background-color: #f0f0f0;
+        .retailmenot-template .coupon-description {
+            font-size: 16px;
             color: #333;
-            border-radius: 3px;
+            margin-bottom: 10px;
         }
-
-        .store-products-pagination .page-numbers.current {
-            background-color: #333;
-            color: #fff;
+        .retailmenot-template .coupon-button {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #6c0ab7;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
         }
-
-        @media (max-width: 767px) {
-            .store-products {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
+        .retailmenot-template .coupon-footer {
+            border-top: 1px solid #e0e0e0;
+            padding-top: 15px;
+            margin-top: 15px;
         }
-
-        @media (max-width: 480px) {
-            .store-products {
-                grid-template-columns: 1fr !important;
+        .retailmenot-template .see-details {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .retailmenot-template .details-icon {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .retailmenot-template .coupon-details {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .retailmenot-template .custom-fields {
+            margin-top: 10px;
+        }
+        .retailmenot-template .custom-field {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .retailmenot-template .custom-field-label {
+            font-weight: bold;
+        }
+        @media (min-width: 768px) {
+            .retailmenot-template .coupon-left {
+                flex: 0 0 30%;
+                margin-bottom: 0;
             }
         }
     </style>
     <?php
-}
+});
+
+// 添加 JavaScript
+add_action('wp_footer', function () {
+    ?>
+    <script>
+        jQuery(document).ready(function($) {
+            function initCouponDetails() {
+                $('.store-coupons').off('click', '.see-details').on('click', '.see-details', function(e) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var $couponItem = $this.closest('.coupon-item');
+                    var $details = $couponItem.find('.coupon-details');
+                    var $icon = $this.find('.details-icon');
+                    $details.slideToggle(300, function() {
+                        if ($details.is(':visible')) {
+                            $icon.text('-');
+                            $this.contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).first().replaceWith('隐藏详情 ');
+                        } else {
+                            $icon.text('+');
+                            $this.contents().filter(function() {
+                                return this.nodeType === 3;
+                            }).first().replaceWith('查看详情 ');
+                        }
+                    });
+                });
+            }
+            initCouponDetails();
+            // 监听 Elementor 前端变化
+            $(window).on('elementor/frontend/init', function() {
+                elementorFrontend.hooks.addAction('frontend/element_ready/dynamic_store_coupons.default', function($scope) {
+                    initCouponDetails();
+                });
+            });
+        });
+    </script>
+    <?php
+});
