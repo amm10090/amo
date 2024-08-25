@@ -20,6 +20,12 @@
     color: #0073aa;
 }
 
+/* 新闻容器样式 */
+.news-container {
+    display: flex;
+    flex-direction: column;
+}
+
 /* 新闻项目样式 */
 .news-item {
     display: flex;
@@ -32,11 +38,18 @@
 .news-thumbnail {
     flex: 0 0 30%;
     margin-right: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
 .news-thumbnail img {
     width: 100%;
     height: auto;
+    transition: transform 0.3s ease;
+}
+
+.news-thumbnail:hover img {
+    transform: scale(1.05);
 }
 
 /* 新闻内容样式 */
@@ -49,6 +62,16 @@
     margin: 0 0 10px;
 }
 
+.news-title a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.news-title a:hover {
+    color: #0073aa;
+}
+
 .news-meta {
     font-size: 14px;
     color: #666;
@@ -59,12 +82,66 @@
     position: relative;
 }
 
-.ad-post .ad-label {
+.ad-label {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 10px;
+    right: 10px;
     background: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 2px 5px;
     font-size: 12px;
+    border-radius: 3px;
+}
+
+/* YouTube广告特定样式 */
+.youtube-ad {
+    cursor: pointer;
+}
+
+.youtube-ad .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 68px;
+    height: 48px;
+    background-color: rgba(0,0,0,0.7);
+    border-radius: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.youtube-ad:hover .play-icon {
+    background-color: rgba(255,0,0,0.8);
+}
+
+.youtube-ad .play-icon:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-style: solid;
+    border-width: 15px 0 15px 26px;
+    border-color: transparent transparent transparent white;
+}
+
+.youtube-ad iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .news-item {
+        flex-direction: column;
+    }
+
+    .news-thumbnail {
+        flex: 0 0 100%;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
 }
