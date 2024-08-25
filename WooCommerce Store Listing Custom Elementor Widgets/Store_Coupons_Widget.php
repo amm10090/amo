@@ -56,6 +56,18 @@ function register_dynamic_store_coupons_widget() {
                 ]
             );
 
+            $this->add_control(
+                'debug_mode',
+                [
+                    'label' => __('Debug Mode', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::SWITCHER,
+                    'label_on' => __('On', 'my-custom-theme'),
+                    'label_off' => __('Off', 'my-custom-theme'),
+                    'return_value' => 'yes',
+                    'default' => 'no',
+                ]
+            );
+
             $this->end_controls_section();
 
             // Layout Section
@@ -67,80 +79,59 @@ function register_dynamic_store_coupons_widget() {
                 ]
             );
 
-            $repeater = new \Elementor\Repeater();
-
-            $repeater->add_control(
-                'part_name',
+            $this->add_control(
+                'left_items',
                 [
-                    'label' => __('Part Name', 'my-custom-theme'),
-                    'type' => \Elementor\Controls_Manager::SELECT,
-                    'default' => 'left',
-                    'options' => [
-                        'left' => __('Left', 'my-custom-theme'),
-                        'center' => __('Center', 'my-custom-theme'),
-                        'right' => __('Right', 'my-custom-theme'),
-                    ],
-                ]
-            );
-
-            $repeater->add_control(
-                'fields',
-                [
-                    'label' => __('Fields', 'my-custom-theme'),
+                    'label' => __('Left Items', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::REPEATER,
-                    'fields' => [
+                    'fields' => $this->get_repeater_fields(),
+                    'default' => [
                         [
-                            'name' => 'field_key',
-                            'label' => __('Field', 'my-custom-theme'),
-                            'type' => \Elementor\Controls_Manager::SELECT,
-                            'options' => $this->get_coupon_fields(),
-                        ],
-                        [
-                            'name' => 'field_type',
-                            'label' => __('Field Type', 'my-custom-theme'),
-                            'type' => \Elementor\Controls_Manager::SELECT,
-                            'default' => 'text',
-                            'options' => [
-                                'text' => __('Text', 'my-custom-theme'),
-                                'link' => __('Link', 'my-custom-theme'),
-                                'image' => __('Image', 'my-custom-theme'),
-                                'percentage' => __('Percentage', 'my-custom-theme'),
-                                'button' => __('Button', 'my-custom-theme'),
-                            ],
+                            'field_key' => 'percentage',
+                            'field_type' => 'percentage',
                         ],
                     ],
+                    'title_field' => '{{{ field_key }}}',
                 ]
             );
 
             $this->add_control(
-                'layout_parts',
+                'center_items',
                 [
-                    'label' => __('Layout Parts', 'my-custom-theme'),
+                    'label' => __('Center Items', 'my-custom-theme'),
                     'type' => \Elementor\Controls_Manager::REPEATER,
-                    'fields' => $repeater->get_controls(),
+                    'fields' => $this->get_repeater_fields(),
                     'default' => [
                         [
-                            'part_name' => 'left',
-                            'fields' => [
-                                ['field_key' => 'percentage', 'field_type' => 'percentage'],
-                            ],
+                            'field_key' => 'coupon_terms_button',
+                            'field_type' => 'text',
                         ],
                         [
-                            'part_name' => 'center',
-                            'fields' => [
-                                ['field_key' => 'coupon_terms_button', 'field_type' => 'text'],
-                                ['field_key' => 'title', 'field_type' => 'text'],
-                                ['field_key' => 'description', 'field_type' => 'text'],
-                            ],
+                            'field_key' => 'title',
+                            'field_type' => 'text',
                         ],
                         [
-                            'part_name' => 'right',
-                            'fields' => [
-                                ['field_key' => 'button_text1', 'field_type' => 'button'],
-                            ],
+                            'field_key' => 'description',
+                            'field_type' => 'text',
                         ],
                     ],
-                    'title_field' => '{{{ part_name }}}',
+                    'title_field' => '{{{ field_key }}}',
+                ]
+            );
+
+            $this->add_control(
+                'right_items',
+                [
+                    'label' => __('Right Items', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::REPEATER,
+                    'fields' => $this->get_repeater_fields(),
+                    'default' => [
+                        [
+                            'field_key' => 'button_text1',
+                            'field_type' => 'button',
+                        ],
+                    ],
+                    'title_field' => '{{{ field_key }}}',
                 ]
             );
 
@@ -313,24 +304,61 @@ function register_dynamic_store_coupons_widget() {
             $this->end_controls_section();
         }
 
+        private function get_repeater_fields() {
+            $repeater = new \Elementor\Repeater();
+
+            $repeater->add_control(
+                'field_key',
+                [
+                    'label' => __('Field', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::SELECT,
+                    'options' => $this->get_coupon_fields(),
+                ]
+            );
+
+            $repeater->add_control(
+                'field_type',
+                [
+                    'label' => __('Field Type', 'my-custom-theme'),
+                    'type' => \Elementor\Controls_Manager::SELECT,
+                    'default' => 'text',
+                    'options' => [
+                        'text' => __('Text', 'my-custom-theme'),
+                        'link' => __('Link', 'my-custom-theme'),
+                        'image' => __('Image', 'my-custom-theme'),
+                        'percentage' => __('Percentage', 'my-custom-theme'),
+                        'button' => __('Button', 'my-custom-theme'),
+                    ],
+                ]
+            );
+
+            return $repeater->get_controls();
+        }
+
         protected function render() {
             $settings = $this->get_settings_for_display();
-            $store_id = $this->get_current_store_id();
-
-            if (!$store_id) {
-                echo __('This widget can only be used on store pages.', 'my-custom-theme');
-                return;
+            
+            if ($settings['debug_mode'] === 'yes') {
+                // In debug mode, display all coupons
+                $args = array(
+                    'post_type' => 'coupon',
+                    'posts_per_page' => -1,
+                );
+                $coupons = get_posts($args);
+            } else {
+                // Normal mode: get coupons for the current store
+                $store_id = $this->get_current_store_id();
+                $coupons = get_field('select_coupon', $store_id);
             }
 
-            $coupons = get_field('select_coupon', $store_id);
-
             if (!$coupons || empty($coupons)) {
-                echo __('No coupons found for this store.', 'my-custom-theme');
+                echo __('No coupons found.', 'my-custom-theme');
                 return;
             }
 
             echo '<div class="store-coupons">';
-            foreach ($coupons as $coupon_id) {
+            foreach ($coupons as $coupon) {
+                $coupon_id = $settings['debug_mode'] === 'yes' ? $coupon->ID : $coupon;
                 $this->render_coupon_item($coupon_id, $settings);
             }
             echo '</div>';
@@ -340,6 +368,7 @@ function register_dynamic_store_coupons_widget() {
             if (is_singular('store')) {
                 return get_the_ID();
             }
+            // Return a default store ID or null if not on a store page
             return null;
         }
 
@@ -351,26 +380,30 @@ function register_dynamic_store_coupons_widget() {
             <div class="coupon-item <?php echo esc_attr($template_class); ?>">
                 <div class="coupon-content">
                     <?php
-                    foreach ($settings['layout_parts'] as $part) {
-                        echo '<div class="coupon-' . esc_attr($part['part_name']) . '">';
-                        foreach ($part['fields'] as $field) {
-                            $this->render_field($field['field_key'], $field['field_type'], $coupon_data, $settings);
-                        }
-                        echo '</div>';
-                    }
+                    $this->render_coupon_part('left', $settings['left_items'], $coupon_data, $settings);
+                    $this->render_coupon_part('center', $settings['center_items'], $coupon_data, $settings);
+                    $this->render_coupon_part('right', $settings['right_items'], $coupon_data, $settings);
                     ?>
                 </div>
                 <?php if (!empty($coupon_data['coupon_terms_accordion'])): ?>
                     <div class="coupon-details">
                         <a href="#" class="see-details">See Details <span class="details-icon">+</span></a>
                         <div class="terms-accordion" style="display: none;">
-                            <h4>DETAILS</h4>
+                        <h4>DETAILS</h4>
                             <?php echo wp_kses_post($coupon_data['coupon_terms_accordion']); ?>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
             <?php
+        }
+
+        private function render_coupon_part($part_name, $items, $coupon_data, $settings) {
+            echo '<div class="coupon-' . esc_attr($part_name) . '">';
+            foreach ($items as $item) {
+                $this->render_field($item['field_key'], $item['field_type'], $coupon_data, $settings);
+            }
+            echo '</div>';
         }
 
         private function get_coupon_data($coupon_id) {
@@ -399,6 +432,8 @@ function register_dynamic_store_coupons_widget() {
                         echo '<h3 class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . esc_html($value) . '</h3>';
                     } elseif ($field_key === 'description') {
                         echo '<div class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . wp_kses_post($value) . '</div>';
+                    } elseif ($field_key === 'coupon_terms_button') {
+                        echo '<div class="terms-button">' . esc_html($value) . '</div>';
                     } else {
                         echo '<div class="coupon-' . esc_attr($field_key) . '" ' . $style . '>' . esc_html($value) . '</div>';
                     }
@@ -449,6 +484,9 @@ function register_dynamic_store_coupons_widget() {
             $fields = [
                 'title' => __('Title', 'my-custom-theme'),
                 'description' => __('Description', 'my-custom-theme'),
+                'percentage' => __('Percentage', 'my-custom-theme'),
+                'coupon_terms_button' => __('Coupon Terms Button', 'my-custom-theme'),
+                'button_text1' => __('Button Text', 'my-custom-theme'),
             ];
             
             if (function_exists('acf_get_field_groups') && function_exists('acf_get_fields')) {
