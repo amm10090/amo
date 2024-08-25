@@ -1,51 +1,88 @@
+# 工作流名称
 name: Release Plugin
 
+# 触发条件：当推送带 v 开头的标签时
 on:
   push:
     tags:
       - 'v*'
 
+# 定义作业
 jobs:
   build:
+    # 在最新版的 Ubuntu 上运行
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js
+    # 步骤1：检出代码
+    - name: 检出代码
+      uses: actions/checkout@v3
+
+    # 步骤2：设置 Node.js 环境
+    - name: 设置 Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: '18'  # 使用 Node.js 18 版本
 
-    - name: Zip Plugin
+    # 步骤3：创建插件的 zip 文件
+    - name: 压缩插件文件
       run: |
         if [ -d "amusementbreak/Latest-posts" ]; then
+          # 如果指定目录存在，进入该目录并压缩内容
           cd amusementbreak/Latest-posts
           zip -r ../../latest-posts-for-elementor.zip .
         else
-          echo "Directory amusementbreak/Latest-posts not found. Zipping root directory."
+          # 如果指定目录不存在，压缩当前目录
+          echo "未找到 amusementbreak/Latest-posts 目录。正在压缩当前目录。"
           zip -r latest-posts-for-elementor.zip .
         fi
-      
-    - name: Create or Update Release
+    
+    # 步骤4：列出创建的 zip 文件（用于调试）
+    - name: 列出 zip 文件
+      run: ls -l *.zip
+
+    # 步骤5：创建或更新 Release，并上传资产
+    - name: 创建或更新 Release
       env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
+        GITHUB_TOKEN: ${{ secrets.PAT }}  # 使用配置的 Personal Access Token
       run: |
+        echo "检查是否存在现有的 Release"
+        # 检查是否已存在具有相同标签的 Release
         release_id=$(curl -sS -H "Authorization: token ${{ secrets.PAT }}" \
           "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" | jq -r .id)
         
         if [ "$release_id" = "null" ]; then
-          echo "Creating new release"
+          echo "创建新的 Release"
+          # 如果 Release 不存在，创建新的
           release_response=$(curl -sS -X POST -H "Authorization: token ${{ secrets.PAT }}" \
             -d "{\"tag_name\":\"${{ github.ref_name }}\",\"name\":\"Release ${{ github.ref_name }}\",\"draft\":false,\"prerelease\":false}" \
             "https://api.github.com/repos/${{ github.repository }}/releases")
           upload_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
         else
-          echo "Release already exists. Updating assets."
+          echo "Release 已存在。更新资产。"
+          # 如果 Release 已存在，使用现有的上传 URL
           upload_url="https://uploads.github.com/repos/${{ github.repository }}/releases/$release_id/assets"
         fi
         
-        echo "Uploading asset"
-        curl -sS -X POST -H "Authorization: token ${{ secrets.PAT }}" \
+        echo "上传资产"
+        # 上传 zip 文件作为 Release 资产
+        upload_response=$(curl -sS -X POST -H "Authorization: token ${{ secrets.PAT }}" \
           -H "Content-Type: application/zip" \
           --data-binary @latest-posts-for-elementor.zip \
-          "$upload_url?name=latest-posts-for-elementor.zip"
+          "$upload_url?name=latest-posts-for-elementor.zip")
+        
+        # 检查上传是否成功
+        asset_id=$(echo "$upload_response" | jq -r .id)
+        if [ "$asset_id" != "null" ]; then
+          echo "资产上传成功。资产 ID: $asset_id"
+        else
+          echo "资产上传失败。响应："
+          echo "$upload_response"
+          exit 1
+        fi
+
+    # 步骤6：清理
+    - name: 清理
+      if: always()  # 无论前面的步骤是否成功，都执行清理
+      run: |
+        echo "正在清理..."
+        rm -f latest-posts-for-elementor.zip
