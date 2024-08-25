@@ -3,7 +3,7 @@
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
  * Plugin URI:  https://example.com/plugins/latest-posts-for-elementor
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      Your Name
  * Author URI:  https://example.com
  * Text Domain: latest-posts-for-elementor
@@ -22,23 +22,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * The main class that initiates and runs the plugin.
  *
- * @since 1.0.1
+ * @since 1.0.0
  */
 final class Latest_Posts_For_Elementor {
 
     /**
      * Plugin Version
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @var string The plugin version.
      */
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.0';
 
     /**
      * Minimum Elementor Version
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @var string Minimum Elementor version required to run the plugin.
      */
@@ -47,7 +47,7 @@ final class Latest_Posts_For_Elementor {
     /**
      * Minimum PHP Version
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @var string Minimum PHP version required to run the plugin.
      */
@@ -56,7 +56,7 @@ final class Latest_Posts_For_Elementor {
     /**
      * Instance
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access private
      * @static
@@ -70,7 +70,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Ensures only one instance of the class is loaded or can be loaded.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      * @static
@@ -89,7 +89,7 @@ final class Latest_Posts_For_Elementor {
     /**
      * Constructor
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -105,7 +105,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Fired by `init` action hook.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -121,7 +121,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Fired by `plugins_loaded` action hook.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -139,7 +139,7 @@ final class Latest_Posts_For_Elementor {
      * Checks if the installed version of Elementor meets the plugin's minimum requirement.
      * Checks if the installed PHP version meets the plugin's minimum requirement.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -176,7 +176,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Fired by `plugins_loaded` action hook.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -195,7 +195,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Warning when the site doesn't have Elementor installed or activated.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -219,7 +219,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Warning when the site doesn't have a minimum required Elementor version.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -244,7 +244,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Warning when the site doesn't have a minimum required PHP version.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -283,7 +283,7 @@ final class Latest_Posts_For_Elementor {
      *
      * Load required plugin core files.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access public
      */
@@ -297,14 +297,16 @@ final class Latest_Posts_For_Elementor {
      *
      * Configure the plugin updater.
      *
-     * @since 1.0.1
+     * @since 1.0.0
      *
      * @access private
      */
     private function setup_updater() {
         if (file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
             require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
-            $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+            use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+            $myUpdateChecker = PucFactory::buildUpdateChecker(
                 'https://github.com/amm10090/amo/',
                 __FILE__,
                 'latest-posts-for-elementor'
@@ -312,6 +314,15 @@ final class Latest_Posts_For_Elementor {
 
             // Set the branch that contains the stable release.
             $myUpdateChecker->setBranch('main');
+
+            // Enable release assets
+            $myUpdateChecker->getVcsApi()->enableReleaseAssets();
+
+            // Optional: If you're using a private repository, specify the access token like this:
+            // $myUpdateChecker->setAuthentication('your-token-here');
+
+            // Optional: Enable debug mode
+            // $myUpdateChecker->debugMode = true;
         }
     }
 }
