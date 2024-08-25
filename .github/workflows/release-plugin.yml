@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: 检出代码
       uses: actions/checkout@v3
@@ -43,25 +45,15 @@ jobs:
         fi
 
     - name: 创建 Release
-      id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
-    - name: 上传 Release 资产
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./latest-posts-for-elementor.zip
-        asset_name: latest-posts-for-elementor.zip
-        asset_content_type: application/zip
+      run: |
+        tag_name="${GITHUB_REF#refs/tags/}"
+        release_name="Release $tag_name"
+        gh release create "$tag_name" \
+          --title "$release_name" \
+          --notes "latest-posts-for-elementor $tag_name" \
+          "./latest-posts-for-elementor.zip#Latest Posts for Elementor"
 
     - name: 清理
       if: always()
