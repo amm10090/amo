@@ -1,4 +1,6 @@
 <?php
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
 /**
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
@@ -95,7 +97,7 @@ final class Latest_Posts_For_Elementor {
      */
     public function __construct() {
         add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
-        $this->setup_updater();
+        add_action( 'init', [ $this, 'setup_updater' ] );
     }
 
     /**
@@ -299,12 +301,11 @@ final class Latest_Posts_For_Elementor {
      *
      * @since 1.0.0
      *
-     * @access private
+     * @access public
      */
-    private function setup_updater() {
+    public function setup_updater() {
         if (file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
-            require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
-            use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+            require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
 
             $myUpdateChecker = PucFactory::buildUpdateChecker(
                 'https://github.com/amm10090/amo/',
@@ -317,12 +318,6 @@ final class Latest_Posts_For_Elementor {
 
             // Enable release assets
             $myUpdateChecker->getVcsApi()->enableReleaseAssets();
-
-            // Optional: If you're using a private repository, specify the access token like this:
-            // $myUpdateChecker->setAuthentication('your-token-here');
-
-            // Optional: Enable debug mode
-            // $myUpdateChecker->debugMode = true;
         }
     }
 }
