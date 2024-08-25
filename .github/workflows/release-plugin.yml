@@ -79,12 +79,17 @@ jobs:
       id: recent_commits
       run: |
         cd ${{ steps.project_info.outputs.PROJECT_PATH }}
-        COMMITS=$(git log -n 5 --pretty=format:"* %s" -- . | sed 's/^/    /')
+        PROJECT="${{ steps.project_info.outputs.PROJECT }}"
+        COMMITS=$(git log -n 20 --pretty=format:"%h %s" | grep -i "$PROJECT" | head -n 5 | sed 's/^/* /')
+        if [ -z "$COMMITS" ]; then
+          echo "未找到与项目 $PROJECT 相关的提交信息。"
+          COMMITS="* 未找到与本项目直接相关的最近提交信息。"
+        fi
         echo "COMMITS<<EOF" >> $GITHUB_OUTPUT
         echo "$COMMITS" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
-    - name: 生成发布说明
+    - name: 生成发布说明 
       run: |
         cat << EOF > RELEASE_NOTES.md
         # ${{ steps.project_info.outputs.PROJECT }} 发布说明
@@ -98,7 +103,8 @@ jobs:
         - 文件名: ${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}.zip
         - 内容: ${{ steps.project_info.outputs.PROJECT }} 文件夹的完整目录结构和文件
 
-        ## 最近提交
+        ## 最近相关更新
+        本次更新包含以下最近提交信息：
         ${{ steps.recent_commits.outputs.COMMITS }}
 
         ## 使用说明

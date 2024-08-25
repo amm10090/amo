@@ -5,7 +5,7 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
  * Plugin URI:  https://github.com/amm10090/amo/releases/
- * Version:     1.0.4
+ * Version:     1.0.5
  * Author:      HuaYangTian
  * Author URI:  https://blog.amoze.cc/
  * Text Domain: latest-posts-for-elementor
@@ -35,7 +35,7 @@ final class Latest_Posts_For_Elementor {
      *
      * @var string The plugin version.
      */
-    const VERSION = '1.0.4';
+    const VERSION = '1.0.5';
 
     /**
      * Minimum Elementor Version
