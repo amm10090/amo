@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: 检出代码
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取所有历史以便访问提交信息
 
     - name: 提取项目信息
       id: project_info
@@ -73,6 +75,40 @@ jobs:
           exit 1
         fi
 
+    - name: 获取项目特定的最近提交信息
+      id: recent_commits
+      run: |
+        cd ${{ steps.project_info.outputs.PROJECT_PATH }}
+        COMMITS=$(git log -n 5 --pretty=format:"* %s" -- . | sed 's/^/    /')
+        echo "COMMITS<<EOF" >> $GITHUB_OUTPUT
+        echo "$COMMITS" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: 生成发布说明
+      run: |
+        cat << EOF > RELEASE_NOTES.md
+        # ${{ steps.project_info.outputs.PROJECT }} 发布说明
+
+        ## 版本信息
+        - 版本号: ${{ steps.project_info.outputs.VERSION }}
+        - 项目: ${{ steps.project_info.outputs.PROJECT }}
+        - 标签: ${{ steps.project_info.outputs.TAG }}
+
+        ## 文件详情
+        - 文件名: ${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}.zip
+        - 内容: ${{ steps.project_info.outputs.PROJECT }} 文件夹的完整目录结构和文件
+
+        ## 最近提交
+        ${{ steps.recent_commits.outputs.COMMITS }}
+
+        ## 使用说明
+        请参考项目的使用说明文档。
+
+        ## 注意
+        此资产由持续集成和发布流程自动生成，代表创建Git标签时项目的状态。
+        如有问题，请参考项目的问题跟踪器或联系开发团队。
+        EOF
+
     - name: 创建 Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -80,7 +116,7 @@ jobs:
         RELEASE_TITLE="V${{ steps.project_info.outputs.VERSION }}-${{ steps.project_info.outputs.PROJECT }}"
         if gh release create "${{ steps.project_info.outputs.TAG }}" \
           --title "$RELEASE_TITLE" \
-          --notes "Release for $RELEASE_TITLE" \
+          --notes-file RELEASE_NOTES.md \
           "${{ steps.zip_project.outputs.ZIP_FILE }}"; then
           echo "Release 创建成功：$RELEASE_TITLE"
         else
