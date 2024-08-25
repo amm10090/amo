@@ -1,9 +1,9 @@
-name: Flexible Multi-Project Release
+name: 多项目发布
 
 on:
   push:
     tags:
-      - '*-v*.*.*'  # 匹配如 latest-posts-v1.0.0 或 abc-xyz-v1.0.0 的标签
+      - '*-v*.*.*'  # 匹配如 latest-posts-for-elementor-v1.0.0 的标签
 
 jobs:
   release:
@@ -22,12 +22,18 @@ jobs:
         VERSION=${TAG##*-v}
         echo "PROJECT=$PROJECT" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "项目名称: $PROJECT"
+        echo "版本号: $VERSION"
         
-        # 根据项目名称决定目录路径
-        if [ "$PROJECT" == "latest-posts" ]; then
-          echo "PROJECT_DIR=amusementbreak/Latest-posts" >> $GITHUB_OUTPUT
+        # 查找项目路径
+        PROJECT_PATH=$(find . -type d -name "$PROJECT" | grep -v "^\./\." | head -n 1)
+        if [ -n "$PROJECT_PATH" ]; then
+          PROJECT_PATH=${PROJECT_PATH#./}
+          echo "PROJECT_PATH=$PROJECT_PATH" >> $GITHUB_OUTPUT
+          echo "找到项目路径: $PROJECT_PATH"
         else
-          echo "PROJECT_DIR=$PROJECT" >> $GITHUB_OUTPUT
+          echo "错误：未找到项目 $PROJECT 的目录" >&2
+          exit 1
         fi
 
     - name: 显示当前目录结构
@@ -37,12 +43,14 @@ jobs:
 
     - name: 压缩项目文件
       run: |
-        if [ -d "${{ steps.project_info.outputs.PROJECT_DIR }}" ]; then
-          cd ${{ steps.project_info.outputs.PROJECT_DIR }}
+        if [ -d "${{ steps.project_info.outputs.PROJECT_PATH }}" ]; then
+          echo "已找到项目目录：${{ steps.project_info.outputs.PROJECT_PATH }}"
+          cd "${{ steps.project_info.outputs.PROJECT_PATH }}"
           zip -r ../../${{ steps.project_info.outputs.PROJECT }}.zip .
           cd ../..
+          echo "项目文件已成功压缩"
         else
-          echo "错误：未找到项目目录 ${{ steps.project_info.outputs.PROJECT_DIR }}"
+          echo "错误：未找到项目目录 ${{ steps.project_info.outputs.PROJECT_PATH }}" >&2
           echo "当前目录结构："
           ls -R
           exit 1
@@ -50,8 +58,10 @@ jobs:
 
     - name: 检查 zip 文件
       run: |
-        if [ ! -f "${{ steps.project_info.outputs.PROJECT }}.zip" ]; then
-          echo "错误：未找到 zip 文件"
+        if [ -f "${{ steps.project_info.outputs.PROJECT }}.zip" ]; then
+          echo "ZIP 文件已成功创建：${{ steps.project_info.outputs.PROJECT }}.zip"
+        else
+          echo "错误：未找到 ZIP 文件 ${{ steps.project_info.outputs.PROJECT }}.zip" >&2
           exit 1
         fi
 
@@ -60,11 +70,21 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
         RELEASE_TITLE="${{ steps.project_info.outputs.PROJECT }} v${{ steps.project_info.outputs.VERSION }}"
-        gh release create "${{ steps.project_info.outputs.PROJECT }}-v${{ steps.project_info.outputs.VERSION }}" \
+        if gh release create "${{ github.ref }}" \
           --title "$RELEASE_TITLE" \
           --notes "Release for $RELEASE_TITLE" \
-          "${{ steps.project_info.outputs.PROJECT }}.zip#$RELEASE_TITLE"
+          "${{ steps.project_info.outputs.PROJECT }}.zip#$RELEASE_TITLE"; then
+          echo "Release 创建成功：$RELEASE_TITLE"
+        else
+          echo "错误：创建 Release 失败" >&2
+          exit 1
+        fi
 
     - name: 清理
       if: always()
-      run: rm -f ${{ steps.project_info.outputs.PROJECT }}.zip
+      run: |
+        if rm -f ${{ steps.project_info.outputs.PROJECT }}.zip; then
+          echo "临时 ZIP 文件已清理"
+        else
+          echo "警告：清理临时 ZIP 文件失败" >&2
+        fi
