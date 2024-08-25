@@ -1,9 +1,9 @@
-name: Release Plugin
+name: Flexible Multi-Project Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - '*-v*.*.*'  # 匹配如 latest-posts-v1.0.0 或 abc-xyz-v1.0.0 的标签
 
 jobs:
   release:
@@ -14,24 +14,35 @@ jobs:
     - name: 检出代码
       uses: actions/checkout@v3
 
-    - name: 设置 Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
+    - name: 提取项目信息
+      id: project_info
+      run: |
+        TAG=${GITHUB_REF#refs/tags/}
+        PROJECT=${TAG%-v*}
+        VERSION=${TAG##*-v}
+        echo "PROJECT=$PROJECT" >> $GITHUB_OUTPUT
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        
+        # 根据项目名称决定目录路径
+        if [ "$PROJECT" == "latest-posts" ]; then
+          echo "PROJECT_DIR=amusementbreak/Latest-posts" >> $GITHUB_OUTPUT
+        else
+          echo "PROJECT_DIR=$PROJECT" >> $GITHUB_OUTPUT
+        fi
 
     - name: 显示当前目录结构
       run: |
         echo "当前目录结构："
         ls -R
 
-    - name: 压缩插件文件
+    - name: 压缩项目文件
       run: |
-        if [ -d "amusementbreak/Latest-posts" ]; then
-          cd amusementbreak/Latest-posts
-          zip -r ../../latest-posts-for-elementor.zip .
+        if [ -d "${{ steps.project_info.outputs.PROJECT_DIR }}" ]; then
+          cd ${{ steps.project_info.outputs.PROJECT_DIR }}
+          zip -r ../../${{ steps.project_info.outputs.PROJECT }}.zip .
           cd ../..
         else
-          echo "错误：未找到插件目录 amusementbreak/Latest-posts"
+          echo "错误：未找到项目目录 ${{ steps.project_info.outputs.PROJECT_DIR }}"
           echo "当前目录结构："
           ls -R
           exit 1
@@ -39,7 +50,7 @@ jobs:
 
     - name: 检查 zip 文件
       run: |
-        if [ ! -f "latest-posts-for-elementor.zip" ]; then
+        if [ ! -f "${{ steps.project_info.outputs.PROJECT }}.zip" ]; then
           echo "错误：未找到 zip 文件"
           exit 1
         fi
@@ -48,13 +59,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
-        tag_name="${GITHUB_REF#refs/tags/}"
-        release_name="Release $tag_name"
-        gh release create "$tag_name" \
-          --title "$release_name" \
-          --notes "latest-posts-for-elementor $tag_name" \
-          "./latest-posts-for-elementor.zip#Latest Posts for Elementor"
+        RELEASE_TITLE="${{ steps.project_info.outputs.PROJECT }} v${{ steps.project_info.outputs.VERSION }}"
+        gh release create "${{ steps.project_info.outputs.PROJECT }}-v${{ steps.project_info.outputs.VERSION }}" \
+          --title "$RELEASE_TITLE" \
+          --notes "Release for $RELEASE_TITLE" \
+          "${{ steps.project_info.outputs.PROJECT }}.zip#$RELEASE_TITLE"
 
     - name: 清理
       if: always()
-      run: rm -f latest-posts-for-elementor.zip
+      run: rm -f ${{ steps.project_info.outputs.PROJECT }}.zip
