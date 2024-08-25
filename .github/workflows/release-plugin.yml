@@ -5,10 +5,6 @@ on:
     tags:
       - 'v*'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,18 +15,17 @@ jobs:
     - name: 设置 Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '16'  # 使用较新的 Node.js 版本
 
     - name: 压缩插件文件
       run: |
-        PLUGIN_DIR="amusementbreak/Latest-posts"
-        if [ -d "$PLUGIN_DIR" ]; then
-          cd "$PLUGIN_DIR"
+        if [ -d "amusementbreak/Latest-posts" ]; then
+          cd amusementbreak/Latest-posts
           zip -r ../../latest-posts-for-elementor.zip .
           cd ../..
         else
-          echo "错误：未找到插件目录 $PLUGIN_DIR"
-          echo "当前目录内容："
+          echo "错误：未找到插件目录 amusementbreak/Latest-posts"
+          echo "当前目录结构："
           ls -R
           exit 1
         fi
@@ -42,14 +37,29 @@ jobs:
           exit 1
         fi
 
+    - name: 获取版本号
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: 检查 Release 是否存在
+      id: check_release
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.get_version.outputs.VERSION }})
+        if [ $response -eq 200 ]; then
+          echo "RELEASE_EXISTS=true" >> $GITHUB_OUTPUT
+        else
+          echo "RELEASE_EXISTS=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: 创建 Release
       id: create_release
+      if: steps.check_release.outputs.RELEASE_EXISTS == 'false'
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
         draft: false
         prerelease: false
 
@@ -65,6 +75,4 @@ jobs:
 
     - name: 清理
       if: always()
-      run: |
-        echo "正在清理..."
-        rm -f latest-posts-for-elementor.zip
+      run: rm -f latest-posts-for-elementor.zip
