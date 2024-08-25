@@ -1,6 +1,7 @@
 # Amo 的项目展示
 
 欢迎来到我的个人项目展示仓库！这里致力于展示各种编码实验、交互式动画和创意项目。
+![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=amm10090&count_private=true&locale=cn&hide=stars&show_icons=true)
 
 [English Version](./README.md)
 
