@@ -11,10 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Zip Plugin
-      run: |
-        cd amusementbreak/Latest-posts
-        zip -r ../../../latest-posts-for-elementor.zip .
+- name: Zip Plugin
+  run: |
+    cd amusementbreak/Latest-posts
+    zip -r ../../latest-posts-for-elementor.zip .
     
     - name: Create Release
       id: create_release
