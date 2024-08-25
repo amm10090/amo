@@ -94,9 +94,8 @@ final class Latest_Posts_For_Elementor {
      * @access public
      */
     public function __construct() {
-
         add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
-
+        $this->setup_updater();
     }
 
     /**
@@ -291,6 +290,29 @@ final class Latest_Posts_For_Elementor {
     public function widget_styles() {
         wp_register_style( 'latest-posts-widget-style', plugins_url( 'assets/css/latest-posts-widget.css', __FILE__ ) );
         wp_enqueue_style( 'latest-posts-widget-style' );
+    }
+
+    /**
+     * Setup Updater
+     *
+     * Configure the plugin updater.
+     *
+     * @since 1.0.0
+     *
+     * @access private
+     */
+    private function setup_updater() {
+        if (file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
+            require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
+            $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+                'https://github.com/amm10090/amo/tree/main/amusementbreak/Latest-posts/',
+                __FILE__,
+                'latest-posts-for-elementor'
+            );
+
+            // Set the branch that contains the stable release.
+            $myUpdateChecker->setBranch('main');
+        }
     }
 }
 
