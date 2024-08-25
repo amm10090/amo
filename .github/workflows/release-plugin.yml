@@ -12,7 +12,7 @@ jobs:
       contents: write
     steps:
     - name: 检出代码
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # 更新到 v4 版本
 
     - name: 提取项目信息
       id: project_info
