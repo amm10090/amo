@@ -3,7 +3,7 @@ name: 多项目发布
 on:
   push:
     tags:
-      - '*-v*.*.*'  # 匹配如 latest-posts-for-elementor-v1.0.0 的标签
+      - 'v*.*.*-*'  # 匹配如 v1.0.2-podlove-publisher 的标签
 
 jobs:
   release:
@@ -18,12 +18,15 @@ jobs:
       id: project_info
       run: |
         TAG=${GITHUB_REF#refs/tags/}
-        PROJECT=${TAG%-v*}
-        VERSION=${TAG##*-v}
+        VERSION=$(echo $TAG | cut -d'-' -f1)
+        VERSION=${VERSION#v}
+        PROJECT=$(echo $TAG | cut -d'-' -f2-)
         echo "PROJECT=$PROJECT" >> $GITHUB_OUTPUT
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "TAG=$TAG" >> $GITHUB_OUTPUT
         echo "项目名称: $PROJECT"
         echo "版本号: $VERSION"
+        echo "标签: $TAG"
         
         # 查找项目路径
         PROJECT_PATH=$(find . -type d -name "$PROJECT" | grep -v "^\./\." | head -n 1)
@@ -42,13 +45,16 @@ jobs:
         ls -R
 
     - name: 压缩项目文件
+      id: zip_project
       run: |
         if [ -d "${{ steps.project_info.outputs.PROJECT_PATH }}" ]; then
           echo "已找到项目目录：${{ steps.project_info.outputs.PROJECT_PATH }}"
           cd "${{ steps.project_info.outputs.PROJECT_PATH }}"
-          zip -r ../../${{ steps.project_info.outputs.PROJECT }}.zip .
+          ZIP_FILE="${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}.zip"
+          zip -r "../../$ZIP_FILE" .
           cd ../..
-          echo "项目文件已成功压缩"
+          echo "项目文件已成功压缩为 $ZIP_FILE"
+          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_OUTPUT
         else
           echo "错误：未找到项目目录 ${{ steps.project_info.outputs.PROJECT_PATH }}" >&2
           echo "当前目录结构："
@@ -58,22 +64,22 @@ jobs:
 
     - name: 检查 zip 文件
       run: |
-        if [ -f "${{ steps.project_info.outputs.PROJECT }}.zip" ]; then
-          echo "ZIP 文件已成功创建：${{ steps.project_info.outputs.PROJECT }}.zip"
+        if [ -f "${{ steps.zip_project.outputs.ZIP_FILE }}" ]; then
+          echo "ZIP 文件已成功创建：${{ steps.zip_project.outputs.ZIP_FILE }}"
         else
-          echo "错误：未找到 ZIP 文件 ${{ steps.project_info.outputs.PROJECT }}.zip" >&2
+          echo "错误：未找到 ZIP 文件 ${{ steps.zip_project.outputs.ZIP_FILE }}" >&2
           exit 1
         fi
 
     - name: 创建 Release
       env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        RELEASE_TITLE="${{ steps.project_info.outputs.PROJECT }} v${{ steps.project_info.outputs.VERSION }}"
-        if gh release create "${{ github.ref }}" \
+        RELEASE_TITLE="V${{ steps.project_info.outputs.VERSION }}-${{ steps.project_info.outputs.PROJECT }}"
+        if gh release create "${{ steps.project_info.outputs.TAG }}" \
           --title "$RELEASE_TITLE" \
           --notes "Release for $RELEASE_TITLE" \
-          "${{ steps.project_info.outputs.PROJECT }}.zip#$RELEASE_TITLE"; then
+          "${{ steps.zip_project.outputs.ZIP_FILE }}"; then
           echo "Release 创建成功：$RELEASE_TITLE"
         else
           echo "错误：创建 Release 失败" >&2
@@ -83,7 +89,7 @@ jobs:
     - name: 清理
       if: always()
       run: |
-        if rm -f ${{ steps.project_info.outputs.PROJECT }}.zip; then
+        if rm -f ${{ steps.zip_project.outputs.ZIP_FILE }}; then
           echo "临时 ZIP 文件已清理"
         else
           echo "警告：清理临时 ZIP 文件失败" >&2
