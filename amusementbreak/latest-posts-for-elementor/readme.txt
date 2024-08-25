@@ -14,5 +14,5 @@ Adds a customizable Latest Posts widget to Elementor.
 This plugin adds a new widget to Elementor that displays your latest posts with customizable options.
 
 == Changelog ==
-= 1.0.0 =
+= 1.0.1 =
 * Initial release
