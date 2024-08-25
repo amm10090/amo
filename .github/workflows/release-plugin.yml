@@ -41,13 +41,22 @@ jobs:
           exit 1
         fi
 
+    - name: 显示当前目录结构
+      run: |
+        echo "当前目录结构："
+        ls -R
+
     - name: 压缩项目文件
       id: zip_project
       run: |
         if [ -d "${{ steps.project_info.outputs.PROJECT_PATH }}" ]; then
           echo "已找到项目目录：${{ steps.project_info.outputs.PROJECT_PATH }}"
+          TEMP_DIR="${{ steps.project_info.outputs.PROJECT }}"
+          mkdir -p "$TEMP_DIR"
+          cp -R "${{ steps.project_info.outputs.PROJECT_PATH }}"/* "$TEMP_DIR"
           ZIP_FILE="${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}.zip"
-          (cd "${{ steps.project_info.outputs.PROJECT_PATH }}" && zip -r "../../$ZIP_FILE" .)
+          zip -r "$ZIP_FILE" "$TEMP_DIR"
+          rm -rf "$TEMP_DIR"
           echo "项目文件已成功压缩为 $ZIP_FILE"
           echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_OUTPUT
         else
@@ -57,37 +66,25 @@ jobs:
           exit 1
         fi
 
-    - name: 生成项目源代码压缩包
-      id: create_source_archives
+    - name: 检查 zip 文件
       run: |
-        SOURCE_NAME="${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}-source"
-        SOURCE_ZIP="${SOURCE_NAME}.zip"
-        SOURCE_TAR="${SOURCE_NAME}.tar.gz"
-        
-        # 创建 ZIP 源代码包
-        (cd "${{ steps.project_info.outputs.PROJECT_PATH }}" && zip -r "../../$SOURCE_ZIP" . -x "*.zip" "*.tar.gz")
-        
-        # 创建 TAR.GZ 源代码包
-        (cd "${{ steps.project_info.outputs.PROJECT_PATH }}" && tar czf "../../$SOURCE_TAR" --exclude="*.zip" --exclude="*.tar.gz" .)
-        
-        echo "SOURCE_ZIP=$SOURCE_ZIP" >> $GITHUB_OUTPUT
-        echo "SOURCE_TAR=$SOURCE_TAR" >> $GITHUB_OUTPUT
+        if [ -f "${{ steps.zip_project.outputs.ZIP_FILE }}" ]; then
+          echo "ZIP 文件已成功创建：${{ steps.zip_project.outputs.ZIP_FILE }}"
+        else
+          echo "错误：未找到 ZIP 文件 ${{ steps.zip_project.outputs.ZIP_FILE }}" >&2
+          exit 1
+        fi
 
     - name: 获取项目特定的最近提交信息
       id: recent_commits
       run: |
         cd ${{ steps.project_info.outputs.PROJECT_PATH }}
-        PROJECT="${{ steps.project_info.outputs.PROJECT }}"
-        COMMITS=$(git log -n 20 --pretty=format:"%h %s" -- . | head -n 5 | sed 's/^/* /')
-        if [ -z "$COMMITS" ]; then
-          echo "未找到与项目 $PROJECT 相关的提交信息。"
-          COMMITS="* 未找到与本项目直接相关的最近提交信息。"
-        fi
+        COMMITS=$(git log -n 5 --pretty=format:"* %s" -- . | sed 's/^/    /')
         echo "COMMITS<<EOF" >> $GITHUB_OUTPUT
         echo "$COMMITS" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
-    - name: 生成发布说明 
+    - name: 生成发布说明
       run: |
         cat << EOF > RELEASE_NOTES.md
         # ${{ steps.project_info.outputs.PROJECT }} 发布说明
@@ -98,13 +95,10 @@ jobs:
         - 标签: ${{ steps.project_info.outputs.TAG }}
 
         ## 文件详情
-        - 发布文件: ${{ steps.zip_project.outputs.ZIP_FILE }}
-        - 源代码 (ZIP): ${{ steps.create_source_archives.outputs.SOURCE_ZIP }}
-        - 源代码 (TAR.GZ): ${{ steps.create_source_archives.outputs.SOURCE_TAR }}
-        - 内容: ${{ steps.project_info.outputs.PROJECT }} 项目的完整文件和源代码
+        - 文件名: ${{ steps.project_info.outputs.VERSION }}.${{ steps.project_info.outputs.PROJECT }}.zip
+        - 内容: ${{ steps.project_info.outputs.PROJECT }} 文件夹的完整目录结构和文件
 
-        ## 最近相关更新
-        本次更新包含以下最近提交信息：
+        ## 最近提交
         ${{ steps.recent_commits.outputs.COMMITS }}
 
         ## 使用说明
@@ -123,9 +117,7 @@ jobs:
         if gh release create "${{ steps.project_info.outputs.TAG }}" \
           --title "$RELEASE_TITLE" \
           --notes-file RELEASE_NOTES.md \
-          "${{ steps.zip_project.outputs.ZIP_FILE }}" \
-          "${{ steps.create_source_archives.outputs.SOURCE_ZIP }}" \
-          "${{ steps.create_source_archives.outputs.SOURCE_TAR }}"; then
+          "${{ steps.zip_project.outputs.ZIP_FILE }}"; then
           echo "Release 创建成功：$RELEASE_TITLE"
         else
           echo "错误：创建 Release 失败" >&2
@@ -135,7 +127,8 @@ jobs:
     - name: 清理
       if: always()
       run: |
-        rm -f ${{ steps.zip_project.outputs.ZIP_FILE }} \
-              ${{ steps.create_source_archives.outputs.SOURCE_ZIP }} \
-              ${{ steps.create_source_archives.outputs.SOURCE_TAR }}
-        echo "临时压缩文件已清理"
+        if rm -f ${{ steps.zip_project.outputs.ZIP_FILE }}; then
+          echo "临时 ZIP 文件已清理"
+        else
+          echo "警告：清理临时 ZIP 文件失败" >&2
+        fi
