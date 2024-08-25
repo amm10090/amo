@@ -9,13 +9,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
-- name: Zip Plugin
-  run: |
-    cd amusementbreak/Latest-posts
-    zip -r ../../latest-posts-for-elementor.zip .
-    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Zip Plugin
+      run: |
+        cd amusementbreak/Latest-posts
+        zip -r ../../../latest-posts-for-elementor.zip .
+      
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -26,7 +31,7 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
-    
+      
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
