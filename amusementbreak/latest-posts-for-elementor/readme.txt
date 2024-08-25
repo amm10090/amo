@@ -3,7 +3,7 @@ Contributors: huayangtian
 Tags: elementor, posts, widget, latest posts
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -43,7 +43,7 @@ Yes, the widget provides various customization options. You can adjust the layou
 = 1.0.0 =
 * Initial release
 
-= 1.1.0 =
+= 1.1.1 =
 功能增强：
 1. 新增显示控制选项：
    - 可单独控制标题、日期、作者和缩略图的显示
@@ -68,6 +68,37 @@ Yes, the widget provides various customization options. You can adjust the layou
 
 注意：此更新包含多项新功能和样式变更，建议用户更新后检查并调整现有页面中使用的Latest Posts小部件设置。
 
+==  版本 1.1.1 ==
+
+### 功能增强
+
+ 新功能
+1. 新增广告类型选项:
+   - YouTube视频广告
+   - 自定义图片广告
+   - 自定义HTML广告
+2. 为YouTube广告添加自动播放选项
+3. 为YouTube广告添加显示/隐藏播放图标选项
+4. 添加广告重复显示选项
+
+样式优化 改进
+1. 优化广告位置设置,允许更灵活的广告插入
+2. 改进YouTube数据获取和缓存机制
+3. 增强CSS样式,提升整体视觉效果和响应式设计
+
+性能优化
+1. 实现文章查询结果缓存,提高加载速度
+2. 优化JavaScript代码,提升前端性能
+
+ 其他更改
+1. 更新小部件注册方法,以兼容最新版本的Elementor
+2. 改进代码结构,提高可维护性
+3. 添加新的本地化字符串,增强国际化支持
+
+ 开发者说明
+- 新增 `youtube-widget.js` 文件,处理YouTube广告交互
+- 更新 `latest-posts-widget.css`,新增广告相关样式
+- 重构 `Latest_Posts_Widget` 类,支持新的广告功能
 == Upgrade Notice ==
 
 = 1.0.0 =
