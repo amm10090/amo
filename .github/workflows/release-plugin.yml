@@ -30,12 +30,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}
       run: |
-        release_id=$(curl -s -H "Authorization: token ${{ secrets.PAT }}" \
+        release_id=$(curl -sS -H "Authorization: token ${{ secrets.PAT }}" \
           "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}" | jq -r .id)
         
         if [ "$release_id" = "null" ]; then
-          # Create new release
-          release_response=$(curl -X POST -H "Authorization: token ${{ secrets.PAT }}" \
+          echo "Creating new release"
+          release_response=$(curl -sS -X POST -H "Authorization: token ${{ secrets.PAT }}" \
             -d "{\"tag_name\":\"${{ github.ref_name }}\",\"name\":\"Release ${{ github.ref_name }}\",\"draft\":false,\"prerelease\":false}" \
             "https://api.github.com/repos/${{ github.repository }}/releases")
           upload_url=$(echo "$release_response" | jq -r .upload_url | sed 's/{?name,label}//g')
@@ -44,8 +44,8 @@ jobs:
           upload_url="https://uploads.github.com/repos/${{ github.repository }}/releases/$release_id/assets"
         fi
         
-        # Upload asset
-        curl -X POST -H "Authorization: token ${{ secrets.PAT }}" \
+        echo "Uploading asset"
+        curl -sS -X POST -H "Authorization: token ${{ secrets.PAT }}" \
           -H "Content-Type: application/zip" \
           --data-binary @latest-posts-for-elementor.zip \
           "$upload_url?name=latest-posts-for-elementor.zip"
