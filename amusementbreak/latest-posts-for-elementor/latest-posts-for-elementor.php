@@ -35,7 +35,7 @@ final class Latest_Posts_For_Elementor {
      *
      * @var string The plugin version.
      */
-    const VERSION = '1.0.2';
+    const VERSION = '1.0.0';
 
     /**
      * Minimum Elementor Version
