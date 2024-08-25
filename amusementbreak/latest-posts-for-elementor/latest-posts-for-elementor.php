@@ -305,7 +305,7 @@ final class Latest_Posts_For_Elementor {
         if (file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
             require __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
             $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-                'https://github.com/amm10090/amo/tree/main/amusementbreak/Latest-posts/',
+                'https://github.com/amm10090/amo/',
                 __FILE__,
                 'latest-posts-for-elementor'
             );
