@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
     - name: 检出代码
@@ -15,7 +15,12 @@ jobs:
     - name: 设置 Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # 使用较新的 Node.js 版本
+        node-version: '16'
+
+    - name: 显示当前目录结构
+      run: |
+        echo "当前目录结构："
+        ls -R
 
     - name: 压缩插件文件
       run: |
@@ -37,36 +42,21 @@ jobs:
           exit 1
         fi
 
-    - name: 获取版本号
-      id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-    - name: 检查 Release 是否存在
-      id: check_release
-      run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.get_version.outputs.VERSION }})
-        if [ $response -eq 200 ]; then
-          echo "RELEASE_EXISTS=true" >> $GITHUB_OUTPUT
-        else
-          echo "RELEASE_EXISTS=false" >> $GITHUB_OUTPUT
-        fi
-
     - name: 创建 Release
       id: create_release
-      if: steps.check_release.outputs.RELEASE_EXISTS == 'false'
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       with:
-        tag_name: ${{ steps.get_version.outputs.VERSION }}
-        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
 
     - name: 上传 Release 资产
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./latest-posts-for-elementor.zip
