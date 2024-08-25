@@ -1,5 +1,6 @@
 # Amo's Project Showcase
 ![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=amm10090&count_private=true&hide=stars&show_icons=true)
+
 Welcome to my personal project showcase repository! This space is dedicated to demonstrating various coding experiments, interactive animations, and creative endeavors.
 
 [中文版说明](./readme-zh-cn.md)
