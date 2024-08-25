@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
- * Plugin URI:  https://github.com/amm10090/amo/releases
+ * Plugin URI:  https://github.com/amm10090/amo/releases/
  * Version:     1.0.0
  * Author:      HuaYangTian
  * Author URI:  https://blog.amoze.cc/
