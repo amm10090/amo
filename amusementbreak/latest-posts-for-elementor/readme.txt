@@ -56,7 +56,11 @@ Yes, ths plugin is an addon for Elementor and requires Elementor to be installed
 Yes, the widget provides various customization options. You can adjust the layout, typography, colors, and more using Elementor's built-in style options.
 
 == Changelog ==
-== Changelog ==
+= 3.6.0=
+1.将使整个文章卡片变为可点击区域,同时保持原有的视觉效果和功能。现在可以点击卡片的任何部分来访问相应的文章或广告页面,提供了更直观和便捷的交互体验。
+同时,CSS文件中的响应式设计部分确保了在移动设备上的良好显示效果。,整个文章卡片可点击并跳转到相应的页面。
+
+== Upgrade Notice ==
 = 3.5.0 =
 ## 新功能
 * 广告循环显示:
@@ -109,7 +113,6 @@ Yes, the widget provides various customization options. You can adjust the layou
 ## 样式自定义
 * 新增了标题、摘要和元数据的颜色和排版控制
 
-== Upgrade Notice ==
 =3.1.0=
 # Latest Posts for Elementor 3.1 更新日志
 ##报错修复

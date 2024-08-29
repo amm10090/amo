@@ -29,19 +29,24 @@
 }
 
 /* 新闻项和广告项共用样式 */
-.news-item, .ad-post {
-    display: flex;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+.news-item-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
-/* 悬停效果 */
-.news-item:hover, .ad-post:hover {
+.news-item-link:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.news-item {
+    display: flex;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* 缩略图样式 */
@@ -81,8 +86,7 @@
 }
 
 /* 缩略图悬停效果 */
-.news-item:hover .news-thumbnail img,
-.ad-post:hover .news-thumbnail img {
+.news-item-link:hover .news-thumbnail img {
     transform: scale(1.05);
 }
 
@@ -98,15 +102,10 @@
 .news-title {
     font-size: 18px;
     margin: 0 0 10px;
-}
-
-.news-title a {
     color: #333;
-    text-decoration: none;
-    transition: color 0.3s ease;
 }
 
-.news-title a:hover {
+.news-item-link:hover .news-title {
     color: #0073aa;
 }
 
@@ -132,19 +131,8 @@
     margin-right: 10px;
 }
 
-/* 广告项样式 */
-.ad-post {
-    position: relative;
-}
-
 /* YouTube广告样式 */
-.youtube-ad {
-    cursor: pointer;
-    position: relative;
-}
-
 .youtube-ad .news-thumbnail {
-    flex: 0 0 200px;
     position: relative;
 }
 
@@ -175,16 +163,9 @@
     border-color: transparent transparent transparent white;
 }
 
-.youtube-ad iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
 /* YouTube广告AD标志 */
-.youtube-ad .ad-badge {
+.youtube-ad .ad-badge,
+.image-ad .ad-badge {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -193,25 +174,6 @@
     padding: 2px 5px;
     font-size: 12px;
     border-radius: 3px;
-    z-index: 1;
-}
-
-/* 图片广告样式 */
-.image-ad {
-    position: relative;
-}
-
-.image-ad a {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* HTML广告样式 */
-.html-ad {
-    width: 100%;
 }
 
 /* 响应式设计 */
