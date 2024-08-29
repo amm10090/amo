@@ -3,7 +3,7 @@ Contributors: huayangtian
 Tags: elementor, posts, widget, latest posts
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 3.5.0
+Stable tag: 4.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -56,10 +56,68 @@ Yes, ths plugin is an addon for Elementor and requires Elementor to be installed
 Yes, the widget provides various customization options. You can adjust the layout, typography, colors, and more using Elementor's built-in style options.
 
 == Changelog ==
-= 3.6.0=
-1.将使整个文章卡片变为可点击区域,同时保持原有的视觉效果和功能。现在可以点击卡片的任何部分来访问相应的文章或广告页面,提供了更直观和便捷的交互体验。
-同时,CSS文件中的响应式设计部分确保了在移动设备上的良好显示效果。,整个文章卡片可点击并跳转到相应的页面。
 
+= 4.0.0=
+
+# Latest Posts for Elementor 4.0 更新日志
+
+## 新功能
+
+1. 分页支持:
+   - 新增数字分页选项
+   - 新增"加载更多"按钮选项
+   - 支持无限滚动加载
+   - 可选择分页位置(顶部、底部或两者)
+
+2. 动态每页项目数:
+   - 现在可以通过Elementor控件设置每页显示的文章数量
+
+3. 延迟加载:
+   - 添加了延迟加载选项,提高页面加载速度
+
+4. 分页预加载:
+   - 新增预加载下一页内容的选项,提供更快的响应速度
+
+5. 分页历史记录:
+   - 支持使用浏览器的前进/后退按钮在分页间导航
+
+6. 分页URL优化:
+   - 为每个分页生成唯一的URL,有利于SEO
+
+7. 跳页功能:
+   - 允许用户直接跳转到指定页码
+
+8. 响应式分页:
+   - 根据设备屏幕大小自适应分页样式
+
+9. 分页状态保持:
+   - 记住用户最后浏览的页面,返回时自动跳转到该位置
+
+## 优化
+
+1. 性能提升:
+   - 优化了文章加载逻辑,提高了大量文章时的加载速度
+   - 实现了更高效的缓存机制
+
+2. 代码重构:
+   - 重构了小部件渲染逻辑,提高了代码可维护性
+   - 优化了广告插入逻辑
+
+3. 样式优化:
+   - 改进了文章列表和分页的样式
+   - 优化了移动端显示效果
+
+4. 文章卡片可点击:
+-将使整个文章卡片变为可点击区域,同时保持原有的视觉效果和功能。现在可以点击卡片的任何部分来访问相应的文章或广告页面,提供了更直观和便捷的交互体验。
+-同时,CSS文件中的响应式设计部分确保了在移动设备上的良好显示效果。,整个文章卡片可点击并跳转到相应的页面。
+
+## 其他改进
+
+1. 增强了与其他插件的兼容性
+2. 更新了插件文档,详细说明了新功能的使用方法
+3. 修复了已知的小bug
+
+注: 此版本包含重大更新,建议在更新前备份您的网站。
 == Upgrade Notice ==
 = 3.5.0 =
 ## 新功能

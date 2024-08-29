@@ -311,5 +311,72 @@ class Latest_Posts_Control {
         );
 
         $widget->end_controls_section();
+
+        // 分页设置
+        $widget->start_controls_section(
+            'section_pagination',
+            [
+                'label' => esc_html__('Pagination', 'latest-posts-for-elementor'),
+            ]
+        );
+
+        $widget->add_control(
+            'pagination_type',
+            [
+                'label' => esc_html__('Pagination Type', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'none',
+                'options' => [
+                    'none' => esc_html__('None', 'latest-posts-for-elementor'),
+                    'numbers' => esc_html__('Numbers', 'latest-posts-for-elementor'),
+                    'infinite_scroll' => esc_html__('Infinite Scroll', 'latest-posts-for-elementor'),
+                    'load_more' => esc_html__('Load More', 'latest-posts-for-elementor'),
+                    'lazy_loading' => esc_html__('Lazy Loading', 'latest-posts-for-elementor'),
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'pagination_position',
+            [
+                'label' => esc_html__('Pagination Position', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'bottom',
+                'options' => [
+                    'top' => esc_html__('Top', 'latest-posts-for-elementor'),
+                    'bottom' => esc_html__('Bottom', 'latest-posts-for-elementor'),
+                    'both' => esc_html__('Both', 'latest-posts-for-elementor'),
+                ],
+                'condition' => [
+                    'pagination_type!' => 'none',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'enable_preload',
+            [
+                'label' => esc_html__('Enable Preload', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'no',
+                'condition' => [
+                    'pagination_type' => ['numbers', 'load_more'],
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'enable_history',
+            [
+                'label' => esc_html__('Enable History', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'no',
+                'condition' => [
+                    'pagination_type!' => 'none',
+                ],
+            ]
+        );
+
+        $widget->end_controls_section();
     }
 }

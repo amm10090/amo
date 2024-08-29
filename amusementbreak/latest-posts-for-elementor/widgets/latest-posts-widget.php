@@ -73,16 +73,22 @@ class Latest_Posts_Widget extends Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
+        $paged = get_query_var('paged') ? get_query_var('paged') : 1;
 
         $args = [
             'post_type' => 'post',
             'posts_per_page' => $settings['posts_per_page'],
+            'paged' => $paged,
         ];
 
         $query = new \WP_Query($args);
 
         if ($query->have_posts()) {
-            echo '<div class="latest-news-widget">';
+            echo '<div class="latest-news-widget" data-pagination-type="' . esc_attr($settings['pagination_type']) . '">';
+
+            if (in_array($settings['pagination_position'], ['top', 'both'])) {
+                $this->render_pagination($query, $settings);
+            }
 
             $post_count = 0;
             while ($query->have_posts()) {
@@ -139,6 +145,10 @@ class Latest_Posts_Widget extends Widget_Base
                         $this->render_advertisement($settings);
                     }
                 }
+            }
+
+            if (in_array($settings['pagination_position'], ['bottom', 'both'])) {
+                $this->render_pagination($query, $settings);
             }
 
             echo '</div>'; // .latest-news-widget
@@ -277,5 +287,40 @@ class Latest_Posts_Widget extends Widget_Base
         }
 
         return $video_info;
+    }
+
+    /**
+     * 渲染分页
+     */
+    protected function render_pagination($query, $settings)
+    {
+        if ($settings['pagination_type'] === 'none') {
+            return;
+        }
+
+        $total_pages = $query->max_num_pages;
+
+        if ($total_pages > 1) {
+            $current_page = max(1, get_query_var('paged'));
+
+            echo '<nav class="elementor-pagination" role="navigation">';
+
+            if ($settings['pagination_type'] === 'numbers') {
+                echo paginate_links([
+                    'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                    'format' => '?paged=%#%',
+                    'current' => $current_page,
+                    'total' => $total_pages,
+                    'prev_text' => __('&laquo; Previous'),
+                    'next_text' => __('Next &raquo;'),
+                ]);
+            } elseif ($settings['pagination_type'] === 'load_more') {
+                echo '<button class="elementor-button elementor-load-more-button" data-page="' . $current_page . '" data-max-page="' . $total_pages . '">';
+                echo __('Load More', 'latest-posts-for-elementor');
+                echo '</button>';
+            }
+
+            echo '</nav>';
+        }
     }
 }

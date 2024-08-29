@@ -201,3 +201,38 @@
         max-height: none;
     }
 }
+
+/* 分页样式 */
+.elementor-pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.elementor-pagination .page-numbers {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+}
+
+.elementor-pagination .page-numbers.current {
+    background-color: #0073aa;
+    color: #fff;
+    border-color: #0073aa;
+}
+
+.elementor-load-more-button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.elementor-load-more-button:hover {
+    background-color: #005177;
+}
