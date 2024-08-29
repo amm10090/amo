@@ -1,48 +1,16 @@
 <?php
 namespace Latest_Posts_For_Elementor\Controls;
 
-use Elementor\Base_Data_Control;
 use Elementor\Controls_Manager;
 
 if (!defined('ABSPATH')) {
     exit; // 禁止直接访问
 }
 
-class Latest_Posts_Control extends Base_Data_Control {
-    public function get_type() {
-        return 'latest_posts_control';
-    }
-
-    protected function get_default_settings() {
-        return [
-            'label_block' => true,
-        ];
-    }
-
-    public function content_template() {
-        $control_uid = $this->get_control_uid();
-        ?>
-        <div class="elementor-control-field">
-            <label for="<?php echo esc_attr($control_uid); ?>" class="elementor-control-title">{{{ data.label }}}</label>
-            <div class="elementor-control-input-wrapper">
-                <select id="<?php echo esc_attr($control_uid); ?>" class="elementor-control-tag-area" data-setting="{{ data.name }}">
-                    <option value=""><?php echo esc_html__('Select a post', 'latest-posts-for-elementor'); ?></option>
-                    <?php
-                    $posts = get_posts(['numberposts' => -1]);
-                    foreach ($posts as $post) {
-                        echo '<option value="' . esc_attr($post->ID) . '">' . esc_html($post->post_title) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        <# if (data.description) { #>
-            <div class="elementor-control-field-description">{{{ data.description }}}</div>
-        <# } #>
-        <?php
-    }
+class Latest_Posts_Control {
 
     public static function register_controls($widget) {
+        // 内容设置
         $widget->start_controls_section(
             'section_content',
             [
@@ -69,11 +37,50 @@ class Latest_Posts_Control extends Base_Data_Control {
         );
 
         $widget->add_control(
+            'thumbnail_ratio',
+            [
+                'label' => esc_html__('Thumbnail Ratio', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => '16/9',
+                'options' => [
+                    '1/1' => '1:1',
+                    '4/3' => '4:3',
+                    '16/9' => '16:9',
+                    '21/9' => '21:9',
+                ],
+                'condition' => [
+                    'show_thumbnail' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
             'show_title',
             [
                 'label' => esc_html__('Show Title', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
+            ]
+        );
+
+        $widget->add_control(
+            'show_excerpt',
+            [
+                'label' => esc_html__('Show Excerpt', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $widget->add_control(
+            'excerpt_length',
+            [
+                'label' => esc_html__('Excerpt Length', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 25,
+                'condition' => [
+                    'show_excerpt' => 'yes',
+                ],
             ]
         );
 
@@ -95,14 +102,22 @@ class Latest_Posts_Control extends Base_Data_Control {
             ]
         );
 
+        $widget->add_control(
+            'show_category',
+            [
+                'label' => esc_html__('Show Category', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
         $widget->end_controls_section();
 
         // 广告设置
         $widget->start_controls_section(
-            'ad_section',
+            'section_ad',
             [
-                'label' => esc_html__('Advertisement Settings', 'latest-posts-for-elementor'),
-                'tab' => Controls_Manager::TAB_CONTENT,
+                'label' => esc_html__('Advertisement', 'latest-posts-for-elementor'),
             ]
         );
 
@@ -115,7 +130,7 @@ class Latest_Posts_Control extends Base_Data_Control {
                 'options' => [
                     'none' => esc_html__('None', 'latest-posts-for-elementor'),
                     'youtube' => esc_html__('YouTube Video', 'latest-posts-for-elementor'),
-                    'image' => esc_html__('Custom Image', 'latest-posts-for-elementor'),
+                    'image' => esc_html__('Image', 'latest-posts-for-elementor'),
                     'html' => esc_html__('Custom HTML', 'latest-posts-for-elementor'),
                 ],
             ]
@@ -124,9 +139,12 @@ class Latest_Posts_Control extends Base_Data_Control {
         $widget->add_control(
             'ad_position',
             [
-                'label' => esc_html__('AD Position', 'latest-posts-for-elementor'),
+                'label' => esc_html__('Ad Position', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 3,
+                'min' => 1,
+                'max' => 20,
+                'step' => 1,
                 'condition' => [
                     'ad_type!' => 'none',
                 ],
@@ -136,16 +154,16 @@ class Latest_Posts_Control extends Base_Data_Control {
         $widget->add_control(
             'ad_repeat',
             [
-                'label' => esc_html__('Repeat AD', 'latest-posts-for-elementor'),
+                'label' => esc_html__('Repeat Ad', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
-                'default' => 'no',
+                'default' => 'yes',
                 'condition' => [
                     'ad_type!' => 'none',
                 ],
             ]
         );
 
-        // YouTube 特定设置
+        // YouTube广告设置
         $widget->add_control(
             'youtube_channel_id',
             [
@@ -169,23 +187,15 @@ class Latest_Posts_Control extends Base_Data_Control {
         );
 
         $widget->add_control(
-            'youtube_autoplay',
+            'youtube_play_mode',
             [
-                'label' => esc_html__('Autoplay', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::SWITCHER,
-                'default' => 'no',
-                'condition' => [
-                    'ad_type' => 'youtube',
+                'label' => esc_html__('Play Mode', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'inline',
+                'options' => [
+                    'inline' => esc_html__('Play Inline', 'latest-posts-for-elementor'),
+                    'redirect' => esc_html__('Redirect to YouTube', 'latest-posts-for-elementor'),
                 ],
-            ]
-        );
-
-        $widget->add_control(
-            'youtube_show_play_icon',
-            [
-                'label' => esc_html__('Show Play Icon', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::SWITCHER,
-                'default' => 'yes',
                 'condition' => [
                     'ad_type' => 'youtube',
                 ],
@@ -233,7 +243,7 @@ class Latest_Posts_Control extends Base_Data_Control {
 
         // 样式设置
         $widget->start_controls_section(
-            'style_section',
+            'section_style',
             [
                 'label' => esc_html__('Style', 'latest-posts-for-elementor'),
                 'tab' => Controls_Manager::TAB_STYLE,
@@ -257,6 +267,46 @@ class Latest_Posts_Control extends Base_Data_Control {
                 'name' => 'title_typography',
                 'label' => esc_html__('Title Typography', 'latest-posts-for-elementor'),
                 'selector' => '{{WRAPPER}} .news-title',
+            ]
+        );
+
+        $widget->add_control(
+            'excerpt_color',
+            [
+                'label' => esc_html__('Excerpt Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-excerpt' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'excerpt_typography',
+                'label' => esc_html__('Excerpt Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .news-excerpt',
+            ]
+        );
+
+        $widget->add_control(
+            'meta_color',
+            [
+                'label' => esc_html__('Meta Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-meta' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'meta_typography',
+                'label' => esc_html__('Meta Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .news-meta',
             ]
         );
 

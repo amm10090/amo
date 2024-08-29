@@ -3,7 +3,7 @@ Contributors: huayangtian
 Tags: elementor, posts, widget, latest posts
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 3.1.0
+Stable tag: 3.5.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -49,14 +49,67 @@ Key Features:
 
 = Does this plugin require Elementor? =
 
-Yes, this plugin is an addon for Elementor and requires Elementor to be installed and activated.
+Yes, ths plugin is an addon for Elementor and requires Elementor to be installed and activated.
 
 = Can I customize the look of the posts? =
 
 Yes, the widget provides various customization options. You can adjust the layout, typography, colors, and more using Elementor's built-in style options.
 
 == Changelog ==
- 
+== Changelog ==
+= 3.5.0 =
+## 新功能
+* 广告循环显示:
+  - 添加了广告循环显示选项
+  - 用户可以在Elementor控件中设置是否重复显示广告
+* YouTube广告增强:
+  - 在YouTube广告缩略图右上角添加了"AD"标志
+  - 优化了YouTube广告的显示效果
+
+## 优化
+* 重构了广告显示逻辑:
+  - 现在可以根据设置的位置和是否重复来显示广告
+  - 提高了代码的可读性和可维护性
+* 改进了CSS样式:
+  - 优化了YouTube广告的样式
+  - 确保了广告与普通文章列表的视觉一致性
+
+## 文档
+* 更新了readme.txt文件:
+  - 添加了新功能的说明
+  - 优化了文档的排版和结构
+
+## 其他
+* 代码清理和小bug修复
+
+= 3.5.0 =
+## 功能优化
+* 缩略图显示:
+  - 添加了缩略图比例控制,支持1:1、4:3、16:9和21:9四种比例
+  - 为不同比例的缩略图设置了适当的最大宽度和高度
+* 文章摘要:
+  - 添加了摘要长度控制
+  - 当文章没有设置摘要时,自动从文章内容中提取指定长度的文字作为摘要
+  - 在摘要末尾添加省略号
+* YouTube广告:
+  - 添加了YouTube广告播放模式选择(内联播放或重定向到YouTube)
+  - 在YouTube广告缩略图上添加了播放图标
+  - 使用YouTube频道名称作为广告"作者"
+  - 在YouTube广告缩略图右上角添加了半透明的"AD"标志
+
+## 代码重构
+* 将所有Elementor控件定义移至单独的文件(latest-posts-control.php),提高了代码的模块化
+
+## 性能优化
+* 为YouTube视频信息添加了缓存机制,减少API请求次数
+
+## 响应式设计
+* 优化了移动设备上的布局和缩略图显示
+
+## 样式自定义
+* 新增了标题、摘要和元数据的颜色和排版控制
+
+== Upgrade Notice ==
 =3.1.0=
 # Latest Posts for Elementor 3.1 更新日志
 ##报错修复
@@ -88,10 +141,6 @@ Yes, the widget provides various customization options. You can adjust the layou
 2. 优化了文件结构,便于未来的维护和扩展
 
 注: 此更新主要聚焦于添加国际化支持,为插件的全球化使用奠定基础。
-
-
-== Upgrade Notice ==
-
 =3.0.0=
 # Latest Posts for Elementor 3.0 更新日志
 
