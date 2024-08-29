@@ -5,7 +5,6 @@
         var $adPost = $scope.find('.ad-post');
         if ($adPost.length === 0) return;
 
-        // YouTube广告处理
         var $youtubeAd = $adPost.find('.youtube-ad');
         if ($youtubeAd.length > 0) {
             var videoId = $youtubeAd.data('video-id');
@@ -34,20 +33,17 @@
             }
         }
 
-        // 图片广告处理（如果需要的话）
         var $imageAd = $adPost.find('.news-thumbnail');
         if ($imageAd.length > 0) {
             // 这里可以添加图片广告的特殊处理，比如点击跟踪等
         }
 
-        // 自定义HTML广告处理（如果需要的话）
         var $htmlAd = $adPost.find('.custom-html-ad');
         if ($htmlAd.length > 0) {
             // 这里可以添加自定义HTML广告的特殊处理
         }
     };
 
-    // 确保在Elementor前端初始化时运行我们的处理程序
     $(window).on('elementor/frontend/init', function() {
         elementorFrontend.hooks.addAction('frontend/element_ready/latest_posts.default', LatestPostsAdHandler);
     });

@@ -1,135 +1,47 @@
 # Latest Posts for Elementor
 
-A WordPress plugin that adds a Latest Posts widget for the Elementor page builder.
+一个为Elementor页面构建器添加最新文章小部件的WordPress插件。
 
-## Description
+## 特性
 
-Latest Posts for Elementor is a lightweight and customizable WordPress plugin that seamlessly integrates with Elementor. It provides a new widget that allows you to display your most recent blog posts anywhere on your Elementor-built pages.
+- 显示最新文章列表
+- 可自定义显示的文章数量
+- 可选择是否显示文章标题、发布日期、作者和缩略图
+- 支持在文章列表中插入广告
+- 支持三种广告类型：YouTube视频、自定义图片和自定义HTML
+- 可设置广告的位置和是否重复显示
+- 使用YouTube API获取指定频道的最新视频
+- 可自定义样式，包括缩略图尺寸和标题颜色
+- 性能优化：使用WordPress缓存机制和transients
+- 响应式设计
+- 国际化支持
+- SEO优化
 
-Key Features:
-- Easy integration with Elementor
-- Customizable number of posts to display
-- Responsive design
-- Display post thumbnails, titles, excerpts, and meta information
-- Customizable styles to match your website's design
+## 安装
 
-## Requirements
+1. 上传 `latest-posts-for-elementor` 文件夹到 `/wp-content/plugins/` 目录
+2. 在WordPress后台激活插件
+3. 在Elementor编辑器中使用 "Latest Posts" 小部件
 
-- WordPress 5.0+
-- PHP 7.0+
-- Elementor 3.0.0+
+## 使用
 
-## Installation
+1. 在Elementor编辑器中，拖放 "Latest Posts" 小部件到您的页面
+2. 根据需要配置小部件设置
+3. 保存并预览您的页面
 
-### For Users
+## 常见问题
 
-1. Download the latest release from the [GitHub repository](https://github.com/amm10090/amo/releases).
-2. Upload the plugin files to the `/wp-content/plugins/latest-posts-for-elementor` directory, or install the plugin through the WordPress plugins screen directly.
-3. Activate the plugin through the 'Plugins' screen in WordPress.
+Q: 这个插件是否需要Elementor Pro?
+A: 不需要，这个插件可以与免费版的Elementor一起使用。
 
-### For Developers
+## 支持
 
-1. Clone this repository into your WordPress plugins directory:
-   ```
-   git clone https://github.com/amm10090/amo.git latest-posts-for-elementor
-   ```
+如果您遇到任何问题或有任何建议，请在GitHub上创建一个issue。
 
-2. Navigate to the plugin directory:
-   ```
-   cd latest-posts-for-elementor
-   ```
+## 贡献
 
-3. Install Plugin Update Checker:
-   - Download the latest release from [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker)
-   - Extract the contents to a `plugin-update-checker` directory within the plugin folder
+欢迎贡献代码、报告问题或提出改进建议。请查看我们的贡献指南以获取更多信息。
 
-4. Activate the plugin through the WordPress admin interface.
+## 许可证
 
-## Usage
-
-1. Edit a page with Elementor.
-2. Search for "Latest Posts" in the Elementor widgets panel.
-3. Drag and drop the widget into your page.
-4. Customize the widget settings as needed.
-
-## Project Structure
-
-```
-latest-posts-for-elementor/
-├── assets/
-│   └── css/
-│       └── latest-posts-widget.css
-├── widgets/
-│   └── latest-posts-widget.php
-├── latest-posts-for-elementor.php
-├── readme.txt
-└── README.md
-```
-
-## Development Workflow
-
-1. Create a new branch for your feature or bug fix:
-   ```
-   git checkout -b my-new-feature
-   ```
-
-2. Make your changes and commit them:
-   ```
-   git commit -am 'Add some feature'
-   ```
-
-3. Push to the branch:
-   ```
-   git push origin my-new-feature
-   ```
-
-4. Create a new Pull Request on GitHub.
-
-## Releasing Updates
-
-1. Update the version number in:
-   - `latest-posts-for-elementor.php`
-   - `readme.txt`
-
-2. Update the changelog in `readme.txt`
-
-3. Commit your changes and push to the main branch
-
-4. Create a new release on GitHub with the new version number as the tag
-
-5. Ensure the release includes a ZIP file of the plugin (excluding the `plugin-update-checker` directory)
-
-## Plugin Update Checker
-
-This plugin uses the [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker) library to enable automatic updates from GitHub. Here's what you need to know:
-
-### Installation
-
-1. Download the latest release of Plugin Update Checker from [its GitHub repository](https://github.com/YahnisElsts/plugin-update-checker).
-2. Extract the contents to a `plugin-update-checker` directory within the plugin folder.
-
-### Version Control
-
-The `plugin-update-checker` directory is included in `.gitignore`. If you're cloning this repository for development, you'll need to manually add the Plugin Update Checker library as described above.
-
-### Update Process
-
-When a new release is created on GitHub:
-
-1. Ensure the version number in `latest-posts-for-elementor.php` matches the new release version.
-2. Update the changelog in `readme.txt`.
-3. Create a new release on GitHub with the version number as the tag.
-4. The plugin will automatically check for updates and notify users in the WordPress admin panel.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the GPL v2 or later.
-
-## Credits
-
-- [Elementor](https://elementor.com/) by Elementor.com, licensed under GPL
-- [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker) by Yahnis Elsts, licensed under MIT
+GPL v2 或更高版本
