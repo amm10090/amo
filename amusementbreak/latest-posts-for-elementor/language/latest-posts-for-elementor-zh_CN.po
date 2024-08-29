@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Latest Posts for Elementor\n"
+"POT-Creation-Date: 2023-08-29 14:00+0800\n"
+"PO-Revision-Date: 2023-08-29 14:00+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-KeywordsList: __;_e;esc_html__;esc_html_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+msgid "Select a post"
+msgstr "选择一篇文章"
+
+msgid "Content"
+msgstr "内容"
+
+msgid "Posts Per Page"
+msgstr "每页文章数"
+
+msgid "Show Thumbnail"
+msgstr "显示缩略图"
+
+msgid "Show Title"
+msgstr "显示标题"
+
+msgid "Show Date"
+msgstr "显示日期"
+
+msgid "Show Author"
+msgstr "显示作者"
+
+msgid "Advertisement Settings"
+msgstr "广告设置"
+
+msgid "Advertisement Type"
+msgstr "广告类型"
+
+msgid "None"
+msgstr "无"
+
+msgid "YouTube Video"
+msgstr "YouTube 视频"
+
+msgid "Custom Image"
+msgstr "自定义图片"
+
+msgid "Custom HTML"
+msgstr "自定义 HTML"
+
+msgid "AD Position"
+msgstr "广告位置"
+
+msgid "Repeat AD"
+msgstr "重复广告"
+
+msgid "YouTube Channel ID"
+msgstr "YouTube 频道 ID"
+
+msgid "YouTube API Key"
+msgstr "YouTube API 密钥"
+
+msgid "Autoplay"
+msgstr "自动播放"
+
+msgid "Show Play Icon"
+msgstr "显示播放图标"
+
+msgid "Advertisement Image"
+msgstr "广告图片"
+
+msgid "Advertisement Link"
+msgstr "广告链接"
+
+msgid "Style"
+msgstr "样式"
+
+msgid "Title Color"
+msgstr "标题颜色"
+
+msgid "Title Typography"
+msgstr "标题排版"

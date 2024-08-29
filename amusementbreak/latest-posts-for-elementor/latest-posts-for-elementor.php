@@ -1,6 +1,4 @@
 <?php
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
 /**
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
@@ -9,15 +7,20 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
  * Author:      HuaYangTian
  * Author URI:  https://blog.amoze.cc/
  * Text Domain: latest-posts-for-elementor
+ * Domain Path: /languages
  *
  * Requires Plugins: elementor
  * Elementor tested up to: 3.21.0
  * Elementor Pro tested up to: 3.21.0
  */
 
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-lpfe-i18n.php';
 
 /**
  * Main Latest Posts for Elementor Class
@@ -33,6 +36,7 @@ final class Latest_Posts_For_Elementor {
     const MINIMUM_PHP_VERSION = '7.0';
 
     private static $_instance = null;
+    private $plugin_i18n;
 
     public static function instance() {
         if ( is_null( self::$_instance ) ) {
@@ -42,12 +46,18 @@ final class Latest_Posts_For_Elementor {
     }
 
     public function __construct() {
+        $this->load_dependencies();
+        $this->set_locale();
         add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
         add_action( 'init', [ $this, 'setup_updater' ] );
     }
 
-    public function load_textdomain() {
-        load_plugin_textdomain( 'latest-posts-for-elementor' );
+    private function load_dependencies() {
+        $this->plugin_i18n = new LPFE_i18n();
+    }
+
+    private function set_locale() {
+        add_action( 'plugins_loaded', array( $this->plugin_i18n, 'load_plugin_textdomain' ) );
     }
 
     public function on_plugins_loaded() {
@@ -79,8 +89,6 @@ final class Latest_Posts_For_Elementor {
     }
 
     public function init() {
-        $this->load_textdomain();
-
         // 加载控件文件
         require_once(__DIR__ . '/controls/latest-posts-control.php');
 
@@ -88,6 +96,20 @@ final class Latest_Posts_For_Elementor {
         add_action( 'elementor/widgets/register', [ $this, 'register_widgets' ] );
         add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'widget_styles' ] );
         add_action( 'elementor/frontend/after_register_scripts', [ $this, 'register_scripts' ] );
+    }
+
+    public function register_widgets( $widgets_manager ) {
+        require_once( __DIR__ . '/widgets/latest-posts-widget.php' );
+        $widgets_manager->register( new \Elementor\Latest_Posts_Widget() );
+    }
+
+    public function widget_styles() {
+        wp_register_style( 'latest-posts-widget-style', plugins_url( 'assets/css/latest-posts-widget.css', __FILE__ ) );
+        wp_enqueue_style( 'latest-posts-widget-style' );
+    }
+
+    public function register_scripts() {
+        wp_register_script( 'latest-posts-youtube', plugins_url( 'assets/js/youtube-widget.js', __FILE__ ), ['jquery'], self::VERSION, true );
     }
 
     public function admin_notice_missing_main_plugin() {
@@ -129,20 +151,6 @@ final class Latest_Posts_For_Elementor {
         );
 
         printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
-    }
-
-    public function register_widgets( $widgets_manager ) {
-        require_once( __DIR__ . '/widgets/latest-posts-widget.php' );
-        $widgets_manager->register( new \Latest_Posts_For_Elementor\Widgets\Latest_Posts_Widget() );
-    }
-
-    public function widget_styles() {
-        wp_register_style( 'latest-posts-widget-style', plugins_url( 'assets/css/latest-posts-widget.css', __FILE__ ) );
-        wp_enqueue_style( 'latest-posts-widget-style' );
-    }
-
-    public function register_scripts() {
-        wp_register_script( 'latest-posts-youtube', plugins_url( 'assets/js/youtube-widget.js', __FILE__ ), ['jquery'], self::VERSION, true );
     }
 
     public function setup_updater() {
