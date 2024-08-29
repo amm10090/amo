@@ -1,37 +1,37 @@
-# **Latest Posts for Elementor  插件开发文档**
+# **Latest Posts for Elementor 插件开发文档**
 
 ## **1. 插件概述**
 
-"Latest Posts for Elementor"是一个 WordPress 插件,为 Elementor 页面构建器添加了一个显示最新文章的小部件。该插件支持广告整合、YouTube 视频广告、样式自定义、性能优化和响应式设计等功能。
+"Latest Posts for Elementor"是一个WordPress插件,为Elementor页面构建器添加了一个显示最新文章的小部件。该插件支持广告整合、YouTube视频广告、样式自定义、性能优化和响应式设计等功能。
 
 ## **2. 主要功能**
 
 - 显示最新文章列表
-- 支持广告整合(YouTube 视频、图片、HTML)
+- 支持广告整合(YouTube视频、图片、HTML)
 - 自定义文章显示选项(缩略图、标题、日期、作者)
 - 性能优化(查询缓存)
 - 结构化数据支持
 - 国际化支持
 
-## **3.  文件结构**
+## **3. 文件结构**
 
+```yaml
 latest-posts-for-elementor/
 ├── assets/
-│ ├── css/
-│ │ └── latest-posts-widget.css
-│ └── js/
-│ └── youtube-widget.js
+│   ├── css/
+│   │   └── latest-posts-widget.css
+│   └── js/
+│       └── youtube-widget.js
 ├── controls/
-│ └── latest-posts-control.php
+│   └── latest-posts-control.php
 ├── includes/
-│ └── class-lpfe-i18n.php
+│   └── class-lpfe-i18n.php
 ├── languages/
-│ ├── latest-posts-for-elementor.pot
-│ └── latest-posts-for-elementor-zh_CN.po
+│   ├── latest-posts-for-elementor.pot
+│   └── latest-posts-for-elementor-zh_CN.po
 ├── widgets/
-│ └── latest-posts-widget.php
+│   └── latest-posts-widget.php
 └── latest-posts-for-elementor.php
-
 ```
 
 ## **4. 主要类和方法**
@@ -97,8 +97,3 @@ latest-posts-for-elementor/
 如遇问题:1. 检查Elementor和PHP版本是否满足最低要求2. 查看WordPress调试日志
 
 - 检查JavaScript控制台是否有错误
-
-
-
-
-```
