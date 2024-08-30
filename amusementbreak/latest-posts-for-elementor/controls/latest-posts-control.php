@@ -1,4 +1,5 @@
 <?php
+
 namespace Latest_Posts_For_Elementor\Controls;
 
 use Elementor\Controls_Manager;
@@ -7,9 +8,11 @@ if (!defined('ABSPATH')) {
     exit; // 禁止直接访问
 }
 
-class Latest_Posts_Control {
+class Latest_Posts_Control
+{
 
-    public static function register_controls($widget) {
+    public static function register_controls($widget)
+    {
         // 内容设置
         $widget->start_controls_section(
             'section_content',
@@ -257,7 +260,7 @@ class Latest_Posts_Control {
             ]
         );
 
-        
+
 
         $widget->end_controls_section();
 
@@ -481,7 +484,6 @@ class Latest_Posts_Control {
                 ],
             ]
         );
-
         $widget->end_controls_section();
     }
 }
