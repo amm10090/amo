@@ -257,6 +257,8 @@ class Latest_Posts_Control {
             ]
         );
 
+        
+
         $widget->end_controls_section();
 
         // 样式设置
@@ -376,6 +378,28 @@ class Latest_Posts_Control {
                 'name' => 'meta_typography',
                 'label' => esc_html__('Meta Typography', 'latest-posts-for-elementor'),
                 'selector' => '{{WRAPPER}} .news-meta',
+            ]
+        );
+
+        $widget->add_control(
+            'category_color',
+            [
+                'label' => esc_html__('Category Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-category' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_category_color',
+            [
+                'label' => esc_html__('Ad Category Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-category.ad-category' => 'color: {{VALUE}};',
+                ],
             ]
         );
 

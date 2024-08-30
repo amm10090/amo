@@ -137,11 +137,42 @@ class Latest_Posts_Widget extends Widget_Base
      */
     protected function render_post($settings, $post_count)
     {
+        $this->render_item($settings, false);
+    }
+
+    /**
+     * 渲染广告
+     */
+    protected function render_advertisement($settings)
+    {
+        $this->render_item($settings, true);
+    }
+
+    /**
+     * 渲染单个项目（文章或广告）
+     */
+    protected function render_item($settings, $is_ad = false)
+    {
         $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
         $divider_class = $settings['show_divider'] === 'yes' ? 'with-divider' : '';
 
+        echo '<div class="news-item ' . $divider_class . ($is_ad ? ' ad-item' : '') . '">';
+        
+        if ($is_ad) {
+            $this->render_ad_content($settings, $thumbnail_class);
+        } else {
+            $this->render_post_content($settings, $thumbnail_class);
+        }
+
+        echo '</div>'; // .news-item
+    }
+
+    /**
+     * 渲染文章内容
+     */
+    protected function render_post_content($settings, $thumbnail_class)
+    {
         echo '<a href="' . get_permalink() . '" class="news-item-link">';
-        echo '<div class="news-item ' . $divider_class . '">';
         if ($settings['show_thumbnail'] === 'yes') {
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             the_post_thumbnail('medium');
@@ -163,37 +194,23 @@ class Latest_Posts_Widget extends Widget_Base
             echo '<div class="news-excerpt">' . $excerpt . '</div>';
         }
 
-        echo '<div class="news-meta">';
-        if ($settings['show_date'] === 'yes') {
-            echo '<span class="news-date">' . get_the_date() . '</span>';
-        }
-        if ($settings['show_author'] === 'yes') {
-            echo '<span class="news-author">' . get_the_author() . '</span>';
-        }
-        if ($settings['show_category'] === 'yes') {
-            $categories = get_the_category();
-            if (!empty($categories)) {
-                echo '<span class="news-category">' . esc_html($categories[0]->name) . '</span>';
-            }
-        }
-        echo '</div>'; // .news-meta
+        $this->render_meta($settings);
 
         echo '</div>'; // .news-content
-        echo '</div>'; // .news-item
         echo '</a>'; // .news-item-link
     }
 
     /**
-     * 渲染广告
+     * 渲染广告内容
      */
-    protected function render_advertisement($settings)
+    protected function render_ad_content($settings, $thumbnail_class)
     {
         switch ($settings['ad_type']) {
             case 'youtube':
-                $this->render_youtube_ad($settings);
+                $this->render_youtube_ad($settings, $thumbnail_class);
                 break;
             case 'image':
-                $this->render_image_ad($settings);
+                $this->render_image_ad($settings, $thumbnail_class);
                 break;
             case 'html':
                 $this->render_html_ad($settings);
@@ -204,20 +221,15 @@ class Latest_Posts_Widget extends Widget_Base
     /**
      * 渲染YouTube广告
      */
-    protected function render_youtube_ad($settings)
+    protected function render_youtube_ad($settings, $thumbnail_class)
     {
-        // 获取YouTube视频信息
         $video_info = $this->get_youtube_video_info($settings['youtube_channel_id'], $settings['youtube_api_key']);
 
         if ($video_info) {
-            $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
-
             echo '<a href="' . esc_url($video_info['url']) . '" class="news-item-link youtube-ad">';
-            echo '<div class="news-item">';
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($video_info['thumbnail']) . '" alt="' . esc_attr($video_info['title']) . '">';
             echo '<div class="play-icon"></div>';
-            echo '<span class="ad-badge">AD</span>';
             echo '</div>';
 
             echo '<div class="news-content">';
@@ -228,17 +240,9 @@ class Latest_Posts_Widget extends Widget_Base
                 echo '<div class="news-excerpt">' . $excerpt . '</div>';
             }
 
-            echo '<div class="news-meta">';
-            if ($settings['show_date'] === 'yes') {
-                echo '<span class="news-date">' . $video_info['published_at'] . '</span>';
-            }
-            if ($settings['show_author'] === 'yes') {
-                echo '<span class="news-author">' . $video_info['channel_title'] . '</span>';
-            }
-            echo '</div>'; // .news-meta
+            $this->render_meta($settings, $video_info['published_at'], $video_info['channel_title'], true);
 
             echo '</div>'; // .news-content
-            echo '</div>'; // .news-item
             echo '</a>'; // .news-item-link.youtube-ad
         }
     }
@@ -246,19 +250,21 @@ class Latest_Posts_Widget extends Widget_Base
     /**
      * 渲染图片广告
      */
-    protected function render_image_ad($settings)
+    protected function render_image_ad($settings, $thumbnail_class)
     {
         if (!empty($settings['ad_image']['url'])) {
-            $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
-
             echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-item-link image-ad">';
-            echo '<div class="news-item">';
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($settings['ad_image']['url']) . '" alt="Advertisement">';
-            echo '<span class="ad-badge">AD</span>';
             echo '</div>';
-            echo '</div>'; // .news-item
-            echo '</a>'; // .news-item-link.image-ad
+            echo '<div class="news-content">';
+            echo '<h3 class="news-title">' . esc_html($settings['ad_title']) . '</h3>';
+            if ($settings['show_excerpt'] === 'yes') {
+                echo '<div class="news-excerpt">' . esc_html($settings['ad_description']) . '</div>';
+            }
+            $this->render_meta($settings, current_time('Y-m-d'), '', true);
+            echo '</div>'; // .news-content
+            echo '</a>';
         }
     }
 
@@ -269,11 +275,33 @@ class Latest_Posts_Widget extends Widget_Base
     {
         if (!empty($settings['ad_html'])) {
             echo '<div class="news-item-link html-ad">';
-            echo '<div class="news-item">';
+            echo '<div class="news-content">';
             echo $settings['ad_html'];
-            echo '</div>'; // .news-item
+            $this->render_meta($settings, current_time('Y-m-d'), '', true);
+            echo '</div>'; // .news-content
             echo '</div>'; // .news-item-link.html-ad
         }
+    }
+
+    /**
+     * 渲染元数据
+     */
+    protected function render_meta($settings, $date = '', $author = '', $is_ad = false)
+    {
+        echo '<div class="news-meta">';
+        if ($settings['show_date'] === 'yes') {
+            echo '<span class="news-date">' . ($date ? $date : get_the_date()) . '</span>';
+        }
+        if ($settings['show_author'] === 'yes') {
+            echo '<span class="news-author">' . ($author ? $author : get_the_author()) . '</span>';
+        }
+        if ($settings['show_category'] === 'yes') {
+                if (!empty($categories)) {
+                    echo '<span class="news-category">' . esc_html($categories[0]->name) . '</span>';
+                }
+            }
+        }
+        echo '</div>'; // .news-meta
     }
 
     /**
