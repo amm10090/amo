@@ -86,6 +86,10 @@ class Latest_Posts_Widget extends Widget_Base
         if ($query->have_posts()) {
             echo '<div class="latest-news-widget" data-pagination-type="' . esc_attr($settings['pagination_type']) . '">';
 
+            if ($settings['show_title_bar'] === 'yes') {
+                $this->render_title_bar($settings);
+            }
+
             if (in_array($settings['pagination_position'], ['top', 'both'])) {
                 $this->render_pagination($query, $settings);
             }
@@ -95,49 +99,7 @@ class Latest_Posts_Widget extends Widget_Base
                 $query->the_post();
                 $post_count++;
 
-                $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
-
-                echo '<a href="' . get_permalink() . '" class="news-item-link">';
-                echo '<div class="news-item">';
-                if ($settings['show_thumbnail'] === 'yes') {
-                    echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
-                    the_post_thumbnail('medium');
-                    echo '</div>';
-                }
-
-                echo '<div class="news-content">';
-                if ($settings['show_title'] === 'yes') {
-                    echo '<h3 class="news-title">' . get_the_title() . '</h3>';
-                }
-
-                if ($settings['show_excerpt'] === 'yes') {
-                    $excerpt = get_the_excerpt();
-                    if (empty($excerpt)) {
-                        $excerpt = wp_trim_words(get_the_content(), $settings['excerpt_length'], '...');
-                    } else {
-                        $excerpt = wp_trim_words($excerpt, $settings['excerpt_length'], '...');
-                    }
-                    echo '<div class="news-excerpt">' . $excerpt . '</div>';
-                }
-
-                echo '<div class="news-meta">';
-                if ($settings['show_date'] === 'yes') {
-                    echo '<span class="news-date">' . get_the_date() . '</span>';
-                }
-                if ($settings['show_author'] === 'yes') {
-                    echo '<span class="news-author">' . get_the_author() . '</span>';
-                }
-                if ($settings['show_category'] === 'yes') {
-                    $categories = get_the_category();
-                    if (!empty($categories)) {
-                        echo '<span class="news-category">' . esc_html($categories[0]->name) . '</span>';
-                    }
-                }
-                echo '</div>'; // .news-meta
-
-                echo '</div>'; // .news-content
-                echo '</div>'; // .news-item
-                echo '</a>'; // .news-item-link
+                $this->render_post($settings, $post_count);
 
                 // 插入广告
                 if ($settings['ad_type'] !== 'none' && $post_count % $settings['ad_position'] === 0) {
@@ -155,6 +117,70 @@ class Latest_Posts_Widget extends Widget_Base
 
             wp_reset_postdata();
         }
+    }
+
+    /**
+     * 渲染标题栏
+     */
+    protected function render_title_bar($settings)
+    {
+        if ($settings['show_title_bar'] === 'yes') {
+            echo '<h2 class="latest-news-title elementor-heading-title">';
+            echo '<span class="first-title">' . esc_html($settings['title_bar_first_text']) . '</span> ';
+            echo '<span class="second-title">' . esc_html($settings['title_bar_second_text']) . '</span>';
+            echo '</h2>';
+        }
+    }
+
+    /**
+     * 渲染单个文章
+     */
+    protected function render_post($settings, $post_count)
+    {
+        $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
+        $divider_class = $settings['show_divider'] === 'yes' ? 'with-divider' : '';
+
+        echo '<a href="' . get_permalink() . '" class="news-item-link">';
+        echo '<div class="news-item ' . $divider_class . '">';
+        if ($settings['show_thumbnail'] === 'yes') {
+            echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
+            the_post_thumbnail('medium');
+            echo '</div>';
+        }
+
+        echo '<div class="news-content">';
+        if ($settings['show_title'] === 'yes') {
+            echo '<h3 class="news-title">' . get_the_title() . '</h3>';
+        }
+
+        if ($settings['show_excerpt'] === 'yes') {
+            $excerpt = get_the_excerpt();
+            if (empty($excerpt)) {
+                $excerpt = wp_trim_words(get_the_content(), $settings['excerpt_length'], '...');
+            } else {
+                $excerpt = wp_trim_words($excerpt, $settings['excerpt_length'], '...');
+            }
+            echo '<div class="news-excerpt">' . $excerpt . '</div>';
+        }
+
+        echo '<div class="news-meta">';
+        if ($settings['show_date'] === 'yes') {
+            echo '<span class="news-date">' . get_the_date() . '</span>';
+        }
+        if ($settings['show_author'] === 'yes') {
+            echo '<span class="news-author">' . get_the_author() . '</span>';
+        }
+        if ($settings['show_category'] === 'yes') {
+            $categories = get_the_category();
+            if (!empty($categories)) {
+                echo '<span class="news-category">' . esc_html($categories[0]->name) . '</span>';
+            }
+        }
+        echo '</div>'; // .news-meta
+
+        echo '</div>'; // .news-content
+        echo '</div>'; // .news-item
+        echo '</a>'; // .news-item-link
     }
 
     /**

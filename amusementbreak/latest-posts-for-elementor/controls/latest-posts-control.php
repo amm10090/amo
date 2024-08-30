@@ -19,6 +19,39 @@ class Latest_Posts_Control {
         );
 
         $widget->add_control(
+            'show_title_bar',
+            [
+                'label' => esc_html__('Show Title Bar', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $widget->add_control(
+            'title_bar_first_text',
+            [
+                'label' => esc_html__('First Title Text', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXT,
+                'default' => 'Latest',
+                'condition' => [
+                    'show_title_bar' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'title_bar_second_text',
+            [
+                'label' => esc_html__('Second Title Text', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXT,
+                'default' => 'News',
+                'condition' => [
+                    'show_title_bar' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
             'posts_per_page',
             [
                 'label' => esc_html__('Posts Per Page', 'latest-posts-for-elementor'),
@@ -111,11 +144,20 @@ class Latest_Posts_Control {
             ]
         );
 
+        $widget->add_control(
+            'show_divider',
+            [
+                'label' => esc_html__('Show Divider', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
         $widget->end_controls_section();
 
         // 广告设置
         $widget->start_controls_section(
-            'section_ad',
+            'section_ads',
             [
                 'label' => esc_html__('Advertisement', 'latest-posts-for-elementor'),
             ]
@@ -124,7 +166,7 @@ class Latest_Posts_Control {
         $widget->add_control(
             'ad_type',
             [
-                'label' => esc_html__('Advertisement Type', 'latest-posts-for-elementor'),
+                'label' => esc_html__('Ad Type', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'none',
                 'options' => [
@@ -142,9 +184,6 @@ class Latest_Posts_Control {
                 'label' => esc_html__('Ad Position', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 3,
-                'min' => 1,
-                'max' => 20,
-                'step' => 1,
                 'condition' => [
                     'ad_type!' => 'none',
                 ],
@@ -156,14 +195,13 @@ class Latest_Posts_Control {
             [
                 'label' => esc_html__('Repeat Ad', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
-                'default' => 'yes',
+                'default' => 'no',
                 'condition' => [
                     'ad_type!' => 'none',
                 ],
             ]
         );
 
-        // YouTube广告设置
         $widget->add_control(
             'youtube_channel_id',
             [
@@ -187,26 +225,9 @@ class Latest_Posts_Control {
         );
 
         $widget->add_control(
-            'youtube_play_mode',
-            [
-                'label' => esc_html__('Play Mode', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::SELECT,
-                'default' => 'inline',
-                'options' => [
-                    'inline' => esc_html__('Play Inline', 'latest-posts-for-elementor'),
-                    'redirect' => esc_html__('Redirect to YouTube', 'latest-posts-for-elementor'),
-                ],
-                'condition' => [
-                    'ad_type' => 'youtube',
-                ],
-            ]
-        );
-
-        // 图片广告设置
-        $widget->add_control(
             'ad_image',
             [
-                'label' => esc_html__('Advertisement Image', 'latest-posts-for-elementor'),
+                'label' => esc_html__('Ad Image', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::MEDIA,
                 'condition' => [
                     'ad_type' => 'image',
@@ -217,7 +238,7 @@ class Latest_Posts_Control {
         $widget->add_control(
             'ad_link',
             [
-                'label' => esc_html__('Advertisement Link', 'latest-posts-for-elementor'),
+                'label' => esc_html__('Ad Link', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::URL,
                 'condition' => [
                     'ad_type' => 'image',
@@ -225,14 +246,11 @@ class Latest_Posts_Control {
             ]
         );
 
-        // HTML广告设置
         $widget->add_control(
             'ad_html',
             [
-                'label' => esc_html__('Custom HTML', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::CODE,
-                'language' => 'html',
-                'rows' => 10,
+                'label' => esc_html__('Ad HTML', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXTAREA,
                 'condition' => [
                     'ad_type' => 'html',
                 ],
@@ -251,12 +269,29 @@ class Latest_Posts_Control {
         );
 
         $widget->add_control(
-            'title_color',
+            'title_bar_first_color',
             [
-                'label' => esc_html__('Title Color', 'latest-posts-for-elementor'),
+                'label' => esc_html__('First Title Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-title a' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .latest-news-title .first-title' => 'color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'show_title_bar' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'title_bar_second_color',
+            [
+                'label' => esc_html__('Second Title Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .latest-news-title .second-title' => 'color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'show_title_bar' => 'yes',
                 ],
             ]
         );
@@ -264,8 +299,42 @@ class Latest_Posts_Control {
         $widget->add_group_control(
             \Elementor\Group_Control_Typography::get_type(),
             [
-                'name' => 'title_typography',
+                'name' => 'title_bar_typography',
                 'label' => esc_html__('Title Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .latest-news-title',
+                'condition' => [
+                    'show_title_bar' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'post_title_color',
+            [
+                'label' => esc_html__('Post Title Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'post_title_hover_color',
+            [
+                'label' => esc_html__('Post Title Hover Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item-link:hover .news-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            \Elementor\Group_Control_Typography::get_type(),
+            [
+                'name' => 'post_title_typography',
+                'label' => esc_html__('Post Title Typography', 'latest-posts-for-elementor'),
                 'selector' => '{{WRAPPER}} .news-title',
             ]
         );
@@ -310,6 +379,20 @@ class Latest_Posts_Control {
             ]
         );
 
+        $widget->add_control(
+            'divider_color',
+            [
+                'label' => esc_html__('Divider Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item.with-divider' => 'border-bottom-color: {{VALUE}};',
+                ],
+                'condition' => [
+                    'show_divider' => 'yes',
+                ],
+            ]
+        );
+
         $widget->end_controls_section();
 
         // 分页设置
@@ -329,9 +412,7 @@ class Latest_Posts_Control {
                 'options' => [
                     'none' => esc_html__('None', 'latest-posts-for-elementor'),
                     'numbers' => esc_html__('Numbers', 'latest-posts-for-elementor'),
-                    'infinite_scroll' => esc_html__('Infinite Scroll', 'latest-posts-for-elementor'),
                     'load_more' => esc_html__('Load More', 'latest-posts-for-elementor'),
-                    'lazy_loading' => esc_html__('Lazy Loading', 'latest-posts-for-elementor'),
                 ],
             ]
         );

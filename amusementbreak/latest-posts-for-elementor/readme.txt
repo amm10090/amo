@@ -3,7 +3,7 @@ Contributors: huayangtian
 Tags: elementor, posts, widget, latest posts
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 4.0.0
+Stable tag: 4.1.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -57,10 +57,55 @@ Yes, the widget provides various customization options. You can adjust the layou
 
 == Changelog ==
 
-= 4.0.0=
+= 4.1.0=
 
-# Latest Posts for Elementor 4.0 更新日志
+# Latest Posts for Elementor 4.1.0 更新日志
 
+1. 优化标题栏设置
+   - 新增独立控制标题栏两个部分文本的选项
+   - 添加了分别设置"Latest"和"News"文字颜色的功能
+   - 增强了标题栏的排版控制
+
+2. 改进文章列表样式
+   - 添加了文章之间的分隔线选项
+   - 新增控制分隔线颜色的功能
+
+3. 增强Elementor编辑器中的自定义选项
+   - 文章标题字体、颜色和悬停颜色现可在编辑器中直接设置
+   - 摘要和元数据的样式选项得到扩展
+
+4. 性能优化
+   - 重构了部分代码以提高运行效率
+   - 优化了资源加载逻辑
+
+5. 兼容性提升
+   - 更新了对最新版本Elementor的兼容性检查
+   - 提高了与其他插件的兼容性
+
+6. 代码质量改进
+   - 重构了部分类和方法,提高了代码可读性和可维护性
+   - 增加了代码注释,便于未来的开发和维护
+
+7. 错误修复
+   - 解决了一些已知的小bug和样式问题
+
+这个版本主要聚焦于提高插件的可维护性、用户体验和与GitHub的集成,为未来的持续更新和维护奠定了基础。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+== Upgrade Notice ==
+= 4.0.0 =
 ## 新功能
 
 1. 分页支持:
@@ -118,7 +163,8 @@ Yes, the widget provides various customization options. You can adjust the layou
 3. 修复了已知的小bug
 
 注: 此版本包含重大更新,建议在更新前备份您的网站。
-== Upgrade Notice ==
+
+
 = 3.5.0 =
 ## 新功能
 * 广告循环显示:

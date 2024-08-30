@@ -4,7 +4,7 @@
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
  * Plugin URI:  https://github.com/amm10090/amo/releases/
- * Version:     4.0.0
+ * Version:     4.1.0
  * Author:      HuaYangTian
  * Author URI:  https://blog.amoze.cc/
  * Text Domain: latest-posts-for-elementor
@@ -15,13 +15,13 @@
  * Elementor Pro tested up to: 3.21.0
  */
 
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
 if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
 require_once plugin_dir_path(__FILE__) . 'includes/class-lpfe-i18n.php';
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 /**
  * Main Latest Posts for Elementor Class
@@ -33,12 +33,13 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-lpfe-i18n.php';
 final class Latest_Posts_For_Elementor
 {
 
-    const VERSION = '4.0.0';
+    const VERSION = '4.1.0';
     const MINIMUM_ELEMENTOR_VERSION = '3.0.0';
     const MINIMUM_PHP_VERSION = '7.0';
 
     private static $_instance = null;
     private $plugin_i18n;
+    private $myUpdateChecker;
 
     public static function instance()
     {
@@ -174,19 +175,19 @@ final class Latest_Posts_For_Elementor
     public function setup_updater()
     {
         if (file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
-            require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
-
-            $myUpdateChecker = PucFactory::buildUpdateChecker(
+            require 'plugin-update-checker/plugin-update-checker.php';
+            
+            $this->myUpdateChecker = PucFactory::buildUpdateChecker(
                 'https://github.com/amm10090/amo/',
                 __FILE__,
                 'latest-posts-for-elementor'
             );
 
             // 设置包含稳定版本的分支
-            $myUpdateChecker->setBranch('main');
+            $this->myUpdateChecker->setBranch('main');
 
             // 启用发布资产
-            $myUpdateChecker->getVcsApi()->enableReleaseAssets();
+            $this->myUpdateChecker->getVcsApi()->enableReleaseAssets();
         }
     }
 }
