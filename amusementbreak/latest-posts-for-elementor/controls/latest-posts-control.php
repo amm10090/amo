@@ -3,6 +3,7 @@
 namespace Latest_Posts_For_Elementor\Controls;
 
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Typography;
 
 if (!defined('ABSPATH')) {
     exit; // 禁止直接访问
@@ -260,7 +261,114 @@ class Latest_Posts_Control
             ]
         );
 
+        $widget->add_control(
+            'ad_show_title',
+            [
+                'label' => esc_html__('Show Ad Title', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'condition' => [
+                    'ad_type!' => 'none',
+                ],
+            ]
+        );
 
+        $widget->add_control(
+            'ad_title',
+            [
+                'label' => esc_html__('Ad Title', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXT,
+                'condition' => [
+                    'ad_type' => 'image',
+                    'ad_show_title' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_show_excerpt',
+            [
+                'label' => esc_html__('Show Ad Excerpt', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'condition' => [
+                    'ad_type!' => 'none',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_description',
+            [
+                'label' => esc_html__('Ad Description', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXTAREA,
+                'condition' => [
+                    'ad_type' => 'image',
+                    'ad_show_excerpt' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_excerpt_length',
+            [
+                'label' => esc_html__('Ad Excerpt Length', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 25,
+                'condition' => [
+                    'ad_type!' => 'none',
+                    'ad_show_excerpt' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_show_date',
+            [
+                'label' => esc_html__('Show Ad Date', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'condition' => [
+                    'ad_type!' => 'none',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_date',
+            [
+                'label' => esc_html__('Ad Date', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::DATE_TIME,
+                'condition' => [
+                    'ad_type' => 'image',
+                    'ad_show_date' => 'yes',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_show_author',
+            [
+                'label' => esc_html__('Show Ad Author', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'condition' => [
+                    'ad_type!' => 'none',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_author',
+            [
+                'label' => esc_html__('Ad Author', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::TEXT,
+                'condition' => [
+                    'ad_type' => 'image',
+                    'ad_show_author' => 'yes',
+                ],
+            ]
+        );
 
         $widget->end_controls_section();
 
@@ -302,7 +410,7 @@ class Latest_Posts_Control
         );
 
         $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
+            Group_Control_Typography::get_type(),
             [
                 'name' => 'title_bar_typography',
                 'label' => esc_html__('Title Typography', 'latest-posts-for-elementor'),
@@ -319,7 +427,7 @@ class Latest_Posts_Control
                 'label' => esc_html__('Post Title Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-title' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .news-item:not(.ad-item) .news-title' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -330,57 +438,133 @@ class Latest_Posts_Control
                 'label' => esc_html__('Post Title Hover Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-item-link:hover .news-title' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .news-item-link:hover .news-item:not(.ad-item) .news-title' => 'color: {{VALUE}};',
                 ],
             ]
         );
 
         $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
+            Group_Control_Typography::get_type(),
             [
                 'name' => 'post_title_typography',
                 'label' => esc_html__('Post Title Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-title',
+                'selector' => '{{WRAPPER}} .news-item:not(.ad-item) .news-title',
             ]
         );
 
+        // 广告帖子标题样式
+        $widget->add_control(
+            'ad_title_color',
+            [
+                'label' => esc_html__('Ad Title Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item.ad-item .news-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_title_hover_color',
+            [
+                'label' => esc_html__('Ad Title Hover Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item-link:hover .news-item.ad-item .news-title' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_title_typography',
+                'label' => esc_html__('Ad Title Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .news-item.ad-item .news-title',
+            ]
+        );
+
+        // 普通帖子摘要样式
         $widget->add_control(
             'excerpt_color',
             [
                 'label' => esc_html__('Excerpt Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-excerpt' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .news-item:not(.ad-item) .news-excerpt' => 'color: {{VALUE}};',
                 ],
             ]
         );
 
         $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
+            Group_Control_Typography::get_type(),
             [
                 'name' => 'excerpt_typography',
                 'label' => esc_html__('Excerpt Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-excerpt',
+                'selector' => '{{WRAPPER}} .news-item:not(.ad-item) .news-excerpt',
             ]
         );
 
+        // 广告帖子摘要样式
+        $widget->add_control(
+            'ad_excerpt_color',
+            [
+                'label' => esc_html__('Ad Excerpt Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item.ad-item .news-excerpt' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_excerpt_typography',
+                'label' => esc_html__('Ad Excerpt Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .news-item.ad-item .news-excerpt',
+            ]
+        );
+
+        // 普通帖子元数据样式
         $widget->add_control(
             'meta_color',
             [
                 'label' => esc_html__('Meta Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-meta' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .news-item:not(.ad-item) .news-meta' => 'color: {{VALUE}};',
                 ],
             ]
         );
 
         $widget->add_group_control(
-            \Elementor\Group_Control_Typography::get_type(),
+            Group_Control_Typography::get_type(),
             [
                 'name' => 'meta_typography',
                 'label' => esc_html__('Meta Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-meta',
+                'selector' => '{{WRAPPER}} .news-item:not(.ad-item) .news-meta',
+            ]
+        );
+
+        // 广告帖子元数据样式
+        $widget->add_control(
+            'ad_meta_color',
+            [
+                'label' => esc_html__('Ad Meta Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item.ad-item .news-meta' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_meta_typography',
+                'label' => esc_html__('Ad Meta Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .news-item.ad-item .news-meta',
             ]
         );
 
@@ -420,7 +604,6 @@ class Latest_Posts_Control
             ]
         );
 
-        // Add post background color control
         $widget->add_control(
             'post_background_color',
             [
@@ -432,7 +615,6 @@ class Latest_Posts_Control
             ]
         );
 
-        // Add ad background color control
         $widget->add_control(
             'ad_background_color',
             [
@@ -508,7 +690,6 @@ class Latest_Posts_Control
                 ],
             ]
         );
-
 
         $widget->end_controls_section();
     }

@@ -65,6 +65,67 @@ class Latest_Posts_Widget extends Widget_Base
     protected function register_controls()
     {
         Latest_Posts_Control::register_controls($this);
+
+        // 添加广告内容控制
+        $this->start_controls_section(
+            'section_ad_content',
+            [
+                'label' => esc_html__('Ad Content', 'latest-posts-for-elementor'),
+                'condition' => [
+                    'ad_type!' => 'none',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'ad_show_title',
+            [
+                'label' => esc_html__('Show Ad Title', 'latest-posts-for-elementor'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'ad_show_excerpt',
+            [
+                'label' => esc_html__('Show Ad Excerpt', 'latest-posts-for-elementor'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'ad_excerpt_length',
+            [
+                'label' => esc_html__('Ad Excerpt Length', 'latest-posts-for-elementor'),
+                'type' => \Elementor\Controls_Manager::NUMBER,
+                'default' => 25,
+                'condition' => [
+                    'ad_show_excerpt' => 'yes',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'ad_show_date',
+            [
+                'label' => esc_html__('Show Ad Date', 'latest-posts-for-elementor'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'ad_show_author',
+            [
+                'label' => esc_html__('Show Ad Author', 'latest-posts-for-elementor'),
+                'type' => \Elementor\Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
     /**
@@ -213,7 +274,7 @@ class Latest_Posts_Widget extends Widget_Base
             $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
 
             echo '<a href="' . esc_url($video_info['url']) . '" class="news-item-link youtube-ad">';
-            echo '<div class="news-item">'; // 应用广告帖子背景颜色
+            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($video_info['thumbnail']) . '" alt="' . esc_attr($video_info['title']) . '">';
             echo '<div class="play-icon"></div>';
@@ -221,18 +282,20 @@ class Latest_Posts_Widget extends Widget_Base
             echo '</div>';
 
             echo '<div class="news-content">';
-            echo '<h3 class="news-title">' . esc_html($video_info['title']) . '</h3>';
+            if ($settings['ad_show_title'] === 'yes') {
+                echo '<h3 class="news-title">' . esc_html($video_info['title']) . '</h3>';
+            }
 
-            if ($settings['show_excerpt'] === 'yes') {
-                $excerpt = wp_trim_words($video_info['description'], $settings['excerpt_length'], '...');
+            if ($settings['ad_show_excerpt'] === 'yes') {
+                $excerpt = wp_trim_words($video_info['description'], $settings['ad_excerpt_length'], '...');
                 echo '<div class="news-excerpt">' . $excerpt . '</div>';
             }
 
             echo '<div class="news-meta">';
-            if ($settings['show_date'] === 'yes') {
+            if ($settings['ad_show_date'] === 'yes') {
                 echo '<span class="news-date">' . $video_info['published_at'] . '</span>';
             }
-            if ($settings['show_author'] === 'yes') {
+            if ($settings['ad_show_author'] === 'yes') {
                 echo '<span class="news-author">' . $video_info['channel_title'] . '</span>';
             }
             echo '</div>'; // .news-meta
@@ -252,11 +315,31 @@ class Latest_Posts_Widget extends Widget_Base
             $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
 
             echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-item-link image-ad">';
-            echo '<div class="news-item">'; // 应用广告帖子背景颜色
+            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($settings['ad_image']['url']) . '" alt="Advertisement">';
             echo '<span class="ad-badge">AD</span>';
             echo '</div>';
+
+            // 添加广告内容控制
+            echo '<div class="news-content">';
+            if ($settings['ad_show_title'] === 'yes' && !empty($settings['ad_title'])) {
+                echo '<h3 class="news-title">' . esc_html($settings['ad_title']) . '</h3>';
+            }
+            if ($settings['ad_show_excerpt'] === 'yes' && !empty($settings['ad_description'])) {
+                $excerpt = wp_trim_words($settings['ad_description'], $settings['ad_excerpt_length'], '...');
+                echo '<div class="news-excerpt">' . $excerpt . '</div>';
+            }
+            echo '<div class="news-meta">';
+            if ($settings['ad_show_date'] === 'yes' && !empty($settings['ad_date'])) {
+                echo '<span class="news-date">' . esc_html($settings['ad_date']) . '</span>';
+            }
+            if ($settings['ad_show_author'] === 'yes' && !empty($settings['ad_author'])) {
+                echo '<span class="news-author">' . esc_html($settings['ad_author']) . '</span>';
+            }
+            echo '</div>'; // .news-meta
+            echo '</div>'; // .news-content
+
             echo '</div>'; // .news-item
             echo '</a>'; // .news-item-link.image-ad
         }
@@ -269,7 +352,7 @@ class Latest_Posts_Widget extends Widget_Base
     {
         if (!empty($settings['ad_html'])) {
             echo '<div class="news-item-link html-ad">';
-            echo '<div class="news-item">'; // 应用广告帖子背景颜色
+            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
             echo $settings['ad_html'];
             echo '</div>'; // .news-item
             echo '</div>'; // .news-item-link.html-ad

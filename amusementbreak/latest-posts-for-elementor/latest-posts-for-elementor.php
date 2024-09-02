@@ -4,7 +4,7 @@
  * Plugin Name: Latest Posts for Elementor
  * Description: Adds a Latest Posts widget for Elementor page builder
  * Plugin URI:  https://github.com/amm10090/amo/releases/
- * Version:     4.1.2
+ * Version:     4.1.5
  * Author:      HuaYangTian
  * Author URI:  https://blog.amoze.cc/
  * Text Domain: latest-posts-for-elementor
@@ -33,7 +33,7 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 final class Latest_Posts_For_Elementor
 {
 
-    const VERSION = '4.1.2';
+    const VERSION = '4.1.5';
     const MINIMUM_ELEMENTOR_VERSION = '3.0.0';
     const MINIMUM_PHP_VERSION = '7.0';
 
