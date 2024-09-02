@@ -141,7 +141,7 @@ class Latest_Posts_Widget extends Widget_Base
         $divider_class = $settings['show_divider'] === 'yes' ? 'with-divider' : '';
 
         echo '<a href="' . get_permalink() . '" class="news-item-link">';
-        echo '<div class="news-item ' . $divider_class . '">';
+        echo '<div class="news-item ' . $divider_class . '">'; // 应用普通帖子背景颜色
         if ($settings['show_thumbnail'] === 'yes') {
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             the_post_thumbnail('medium');
@@ -213,7 +213,7 @@ class Latest_Posts_Widget extends Widget_Base
             $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
 
             echo '<a href="' . esc_url($video_info['url']) . '" class="news-item-link youtube-ad">';
-            echo '<div class="news-item">';
+            echo '<div class="news-item">'; // 应用广告帖子背景颜色
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($video_info['thumbnail']) . '" alt="' . esc_attr($video_info['title']) . '">';
             echo '<div class="play-icon"></div>';
@@ -252,7 +252,7 @@ class Latest_Posts_Widget extends Widget_Base
             $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
 
             echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-item-link image-ad">';
-            echo '<div class="news-item">';
+            echo '<div class="news-item">'; // 应用广告帖子背景颜色
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($settings['ad_image']['url']) . '" alt="Advertisement">';
             echo '<span class="ad-badge">AD</span>';
@@ -269,7 +269,7 @@ class Latest_Posts_Widget extends Widget_Base
     {
         if (!empty($settings['ad_html'])) {
             echo '<div class="news-item-link html-ad">';
-            echo '<div class="news-item">';
+            echo '<div class="news-item">'; // 应用广告帖子背景颜色
             echo $settings['ad_html'];
             echo '</div>'; // .news-item
             echo '</div>'; // .news-item-link.html-ad

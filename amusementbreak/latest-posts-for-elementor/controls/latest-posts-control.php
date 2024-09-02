@@ -420,6 +420,30 @@ class Latest_Posts_Control
             ]
         );
 
+        // Add post background color control
+        $widget->add_control(
+            'post_background_color',
+            [
+                'label' => esc_html__('Post Background Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item:not(.ad-item)' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        // Add ad background color control
+        $widget->add_control(
+            'ad_background_color',
+            [
+                'label' => esc_html__('Ad Background Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item.ad-item' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
         $widget->end_controls_section();
 
         // 分页设置
@@ -484,6 +508,8 @@ class Latest_Posts_Control
                 ],
             ]
         );
+
+
         $widget->end_controls_section();
     }
 }
