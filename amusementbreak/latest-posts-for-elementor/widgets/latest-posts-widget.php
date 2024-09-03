@@ -18,7 +18,6 @@ if (!defined('ABSPATH')) {
  */
 class Latest_Posts_Widget extends Widget_Base
 {
-
     /**
      * 获取小部件名称
      */
@@ -84,7 +83,6 @@ class Latest_Posts_Widget extends Widget_Base
         $query = new \WP_Query($args);
 
         if ($query->have_posts()) {
-            // 添加布局和列数类
             $layout_class = 'layout-' . $settings['layout'];
             $columns_class = 'columns-' . $settings['columns'];
             echo '<div class="latest-news-widget ' . $layout_class . ' ' . $columns_class . '" data-preset-style="' . esc_attr($settings['preset_style']) . '">';
@@ -146,7 +144,7 @@ class Latest_Posts_Widget extends Widget_Base
         $divider_class = $settings['show_divider'] === 'yes' ? 'with-divider' : '';
 
         echo '<a href="' . get_permalink() . '" class="news-item-link">';
-        echo '<div class="news-item ' . $divider_class . '">'; // 应用普通帖子背景颜色
+        echo '<div class="news-item ' . $divider_class . '">';
         if ($settings['show_thumbnail'] === 'yes') {
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             the_post_thumbnail('medium');
@@ -193,37 +191,40 @@ class Latest_Posts_Widget extends Widget_Base
      */
     protected function render_advertisement($settings)
     {
+        $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
+
+        echo '<div class="news-item-link ad-item">';
+        echo '<div class="news-item">';
+
         switch ($settings['ad_type']) {
             case 'youtube':
-                $this->render_youtube_ad($settings);
+                $this->render_youtube_ad($settings, $thumbnail_class);
                 break;
             case 'image':
-                $this->render_image_ad($settings);
+                $this->render_image_ad($settings, $thumbnail_class);
                 break;
             case 'html':
-                $this->render_html_ad($settings);
+                $this->render_html_ad($settings, $thumbnail_class);
                 break;
         }
+
+        echo '</div>'; // .news-item
+        echo '</div>'; // .news-item-link.ad-item
     }
 
     /**
      * 渲染YouTube广告
      */
-    protected function render_youtube_ad($settings)
+    protected function render_youtube_ad($settings, $thumbnail_class)
     {
-        // 获取YouTube视频信息
         $video_info = $this->get_youtube_video_info($settings['youtube_channel_id'], $settings['youtube_api_key']);
 
         if ($video_info) {
-            $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
-
-            echo '<a href="' . esc_url($video_info['url']) . '" class="news-item-link youtube-ad">';
-            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
-            echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<a href="' . esc_url($video_info['url']) . '" class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($video_info['thumbnail']) . '" alt="' . esc_attr($video_info['title']) . '">';
             echo '<div class="play-icon"></div>';
             echo '<span class="ad-badge">AD</span>';
-            echo '</div>';
+            echo '</a>';
 
             echo '<div class="news-content">';
             if ($settings['ad_show_title'] === 'yes') {
@@ -245,27 +246,20 @@ class Latest_Posts_Widget extends Widget_Base
             echo '</div>'; // .news-meta
 
             echo '</div>'; // .news-content
-            echo '</div>'; // .news-item
-            echo '</a>'; // .news-item-link.youtube-ad
         }
     }
 
     /**
      * 渲染图片广告
      */
-    protected function render_image_ad($settings)
+    protected function render_image_ad($settings, $thumbnail_class)
     {
         if (!empty($settings['ad_image']['url'])) {
-            $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
-
-            echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-item-link image-ad">';
-            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
-            echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-thumbnail ' . $thumbnail_class . '">';
             echo '<img src="' . esc_url($settings['ad_image']['url']) . '" alt="Advertisement">';
             echo '<span class="ad-badge">AD</span>';
-            echo '</div>';
+            echo '</a>';
 
-            // 添加广告内容控制
             echo '<div class="news-content">';
             if ($settings['ad_show_title'] === 'yes' && !empty($settings['ad_title'])) {
                 echo '<h3 class="news-title">' . esc_html($settings['ad_title']) . '</h3>';
@@ -283,23 +277,21 @@ class Latest_Posts_Widget extends Widget_Base
             }
             echo '</div>'; // .news-meta
             echo '</div>'; // .news-content
-
-            echo '</div>'; // .news-item
-            echo '</a>'; // .news-item-link.image-ad
         }
     }
 
     /**
      * 渲染HTML广告
      */
-    protected function render_html_ad($settings)
+    protected function render_html_ad($settings, $thumbnail_class)
     {
         if (!empty($settings['ad_html'])) {
-            echo '<div class="news-item-link html-ad">';
-            echo '<div class="news-item ad-item">'; // 添加 ad-item 类
+            echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<span class="ad-badge">AD</span>';
+            echo '</div>';
+            echo '<div class="news-content">';
             echo $settings['ad_html'];
-            echo '</div>'; // .news-item
-            echo '</div>'; // .news-item-link.html-ad
+            echo '</div>';
         }
     }
 
