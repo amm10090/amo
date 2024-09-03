@@ -349,3 +349,245 @@
 		width: auto;
 	}
 }
+
+/* 预设样式 */
+
+/* 1. Default样式 */
+.latest-news-widget[data-preset-style='default'] {
+	/* 背景 */
+	background-color: #ffffff;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-thumbnail img {
+	/* 缩略图样式 */
+	border-radius: 5px;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-title {
+	/* 帖子标题 */
+	color: #000000;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-excerpt {
+	/* 摘要 */
+	color: #666666;
+	font-size: 14px;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-meta {
+	/* 元数据 */
+	color: #999999;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-category {
+	/* 类别 */
+	color: #007bff;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='default'] .news-author {
+	/* 作者 */
+	color: #999999;
+	font-size: 12px;
+}
+
+/* 2. Patriotic样式 */
+.latest-news-widget[data-preset-style='patriotic'] {
+	/* 背景 */
+	background-color: #ffffff;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-thumbnail img {
+	/* 缩略图样式 */
+	border-radius: 5px;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-title {
+	/* 帖子标题 */
+	color: #0033a0;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-excerpt {
+	/* 摘要 */
+	color: #666666;
+	font-size: 14px;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-meta {
+	/* 元数据 */
+	color: #999999;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-category {
+	/* 类别 */
+	color: #d52b1e;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='patriotic'] .news-author {
+	/* 作者 */
+	color: #999999;
+	font-size: 12px;
+}
+
+/* 3. Style 1风格 */
+.latest-news-widget[data-preset-style='style1'] {
+	/* 背景 */
+	background-color: #f7f7f7;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-thumbnail img {
+	/* 缩略图样式 */
+	border-radius: 5px;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-title {
+	/* 帖子标题 */
+	color: #333333;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-excerpt {
+	/* 摘要 */
+	color: #666666;
+	font-size: 14px;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-meta {
+	/* 元数据 */
+	color: #999999;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-category {
+	/* 类别 */
+	color: #2e8b57;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style1'] .news-author {
+	/* 作者 */
+	color: #999999;
+	font-size: 12px;
+}
+
+/* 4. Style 2风格 */
+.latest-news-widget[data-preset-style='style2'] {
+	/* 背景 */
+	background-color: #e0f7fa;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-thumbnail img {
+	/* 缩略图样式 */
+	border-radius: 5px;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-title {
+	/* 帖子标题 */
+	color: #01579b;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-excerpt {
+	/* 摘要 */
+	color: #666666;
+	font-size: 14px;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-meta {
+	/* 元数据 */
+	color: #999999;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-category {
+	/* 类别 */
+	color: #4caf50;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style2'] .news-author {
+	/* 作者 */
+	color: #999999;
+	font-size: 12px;
+}
+
+/* 5. Style 3风格 */
+.latest-news-widget[data-preset-style='style3'] {
+	/* 背景 */
+	background-color: #fff8e1;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-thumbnail img {
+	/* 缩略图样式 */
+	border-radius: 5px;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-title {
+	/* 帖子标题 */
+	color: #5d4037;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-excerpt {
+	/* 摘要 */
+	color: #8d6e63;
+	font-size: 14px;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-meta {
+	/* 元数据 */
+	color: #999999;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-category {
+	/* 类别 */
+	color: #fb8c00;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.latest-news-widget[data-preset-style='style3'] .news-author {
+	/* 作者 */
+	color: #999999;
+	font-size: 12px;
+}
+
+/* 确保预设样式在移动端也能正确应用 */
+@media (max-width: 767px) {
+	.latest-news-widget[data-preset-style] .news-title,
+	.latest-news-widget[data-preset-style] .news-excerpt,
+	.latest-news-widget[data-preset-style] .news-meta,
+	.latest-news-widget[data-preset-style] .news-category,
+	.latest-news-widget[data-preset-style] .news-author {
+		color: inherit;
+	}
+
+	.latest-news-widget[data-preset-style] .news-title {
+		font-size: 16px;
+	}
+
+	.latest-news-widget[data-preset-style] .news-excerpt {
+		font-size: 14px;
+	}
+
+	.latest-news-widget[data-preset-style] .news-meta,
+	.latest-news-widget[data-preset-style] .news-category,
+	.latest-news-widget[data-preset-style] .news-author {
+		font-size: 12px;
+	}
+}

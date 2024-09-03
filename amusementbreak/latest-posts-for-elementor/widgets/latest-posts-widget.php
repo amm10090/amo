@@ -135,6 +135,7 @@ class Latest_Posts_Widget extends Widget_Base
 
         echo '</div>'; // .latest-news-widget
     }
+
     /**
      * 渲染标题栏
      */
@@ -205,20 +206,20 @@ class Latest_Posts_Widget extends Widget_Base
      */
     protected function render_advertisement($settings)
     {
-        $thumbnail_class = 'thumbnail-ratio-' . str_replace('/', '-', $settings['thumbnail_ratio']);
+        $unique_ad_class = 'custom-ad-item-' . $this->get_id();
 
         echo '<div class="news-item-link ad-item">';
-        echo '<div class="news-item">';
+        echo '<div class="news-item ad-item ' . esc_attr($unique_ad_class) . '">';
 
         switch ($settings['ad_type']) {
             case 'youtube':
-                $this->render_youtube_ad($settings, $thumbnail_class);
+                $this->render_youtube_ad($settings, $unique_ad_class);
                 break;
             case 'image':
-                $this->render_image_ad($settings, $thumbnail_class);
+                $this->render_image_ad($settings, $unique_ad_class);
                 break;
             case 'html':
-                $this->render_html_ad($settings, $thumbnail_class);
+                $this->render_html_ad($settings, $unique_ad_class);
                 break;
         }
 
@@ -229,12 +230,12 @@ class Latest_Posts_Widget extends Widget_Base
     /**
      * 渲染YouTube广告
      */
-    protected function render_youtube_ad($settings, $thumbnail_class)
+    protected function render_youtube_ad($settings, $unique_ad_class)
     {
         $video_info = $this->get_youtube_video_info($settings['youtube_channel_id'], $settings['youtube_api_key']);
 
         if ($video_info) {
-            echo '<a href="' . esc_url($video_info['url']) . '" class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<a href="' . esc_url($video_info['url']) . '" class="news-thumbnail ' . $unique_ad_class . '-thumbnail">';
             echo '<img src="' . esc_url($video_info['thumbnail']) . '" alt="' . esc_attr($video_info['title']) . '">';
             echo '<div class="play-icon"></div>';
             echo '<span class="ad-badge">AD</span>';
@@ -242,15 +243,15 @@ class Latest_Posts_Widget extends Widget_Base
 
             echo '<div class="news-content">';
             if ($settings['ad_show_title'] === 'yes') {
-                echo '<h3 class="news-title">' . esc_html($video_info['title']) . '</h3>';
+                echo '<h3 class="news-title ' . $unique_ad_class . '-title">' . esc_html($video_info['title']) . '</h3>';
             }
 
             if ($settings['ad_show_excerpt'] === 'yes') {
                 $excerpt = wp_trim_words($video_info['description'], $settings['ad_excerpt_length'], '...');
-                echo '<div class="news-excerpt">' . $excerpt . '</div>';
+                echo '<div class="news-excerpt ' . $unique_ad_class . '-excerpt">' . $excerpt . '</div>';
             }
 
-            echo '<div class="news-meta">';
+            echo '<div class="news-meta ' . $unique_ad_class . '-meta">';
             if ($settings['ad_show_date'] === 'yes') {
                 echo '<span class="news-date">' . $video_info['published_at'] . '</span>';
             }
@@ -266,23 +267,23 @@ class Latest_Posts_Widget extends Widget_Base
     /**
      * 渲染图片广告
      */
-    protected function render_image_ad($settings, $thumbnail_class)
+    protected function render_image_ad($settings, $unique_ad_class)
     {
         if (!empty($settings['ad_image']['url'])) {
-            echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<a href="' . esc_url($settings['ad_link']['url']) . '" class="news-thumbnail ' . $unique_ad_class . '-thumbnail">';
             echo '<img src="' . esc_url($settings['ad_image']['url']) . '" alt="Advertisement">';
             echo '<span class="ad-badge">AD</span>';
             echo '</a>';
 
             echo '<div class="news-content">';
             if ($settings['ad_show_title'] === 'yes' && !empty($settings['ad_title'])) {
-                echo '<h3 class="news-title">' . esc_html($settings['ad_title']) . '</h3>';
+                echo '<h3 class="news-title ' . $unique_ad_class . '-title">' . esc_html($settings['ad_title']) . '</h3>';
             }
             if ($settings['ad_show_excerpt'] === 'yes' && !empty($settings['ad_description'])) {
                 $excerpt = wp_trim_words($settings['ad_description'], $settings['ad_excerpt_length'], '...');
-                echo '<div class="news-excerpt">' . $excerpt . '</div>';
+                echo '<div class="news-excerpt ' . $unique_ad_class . '-excerpt">' . $excerpt . '</div>';
             }
-            echo '<div class="news-meta">';
+            echo '<div class="news-meta ' . $unique_ad_class . '-meta">';
             if ($settings['ad_show_date'] === 'yes' && !empty($settings['ad_date'])) {
                 echo '<span class="news-date">' . esc_html($settings['ad_date']) . '</span>';
             }
@@ -297,13 +298,13 @@ class Latest_Posts_Widget extends Widget_Base
     /**
      * 渲染HTML广告
      */
-    protected function render_html_ad($settings, $thumbnail_class)
+    protected function render_html_ad($settings, $unique_ad_class)
     {
         if (!empty($settings['ad_html'])) {
-            echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
+            echo '<div class="news-thumbnail ' . $unique_ad_class . '-thumbnail">';
             echo '<span class="ad-badge">AD</span>';
             echo '</div>';
-            echo '<div class="news-content">';
+            echo '<div class="news-content ' . $unique_ad_class . '-content">';
             echo $settings['ad_html'];
             echo '</div>';
         }
@@ -347,7 +348,6 @@ class Latest_Posts_Widget extends Widget_Base
 
         return $video_info;
     }
-
     /**
      * 渲染分页
      */

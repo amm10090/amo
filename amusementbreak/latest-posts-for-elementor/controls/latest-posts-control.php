@@ -36,7 +36,6 @@ class Latest_Posts_Control
                     'grid' => esc_html__('Grid', 'latest-posts-for-elementor'),
                     'masonry' => esc_html__('Masonry', 'latest-posts-for-elementor'),
                     'list' => esc_html__('List', 'latest-posts-for-elementor'), // 无序列表
-
                 ],
             ]
         );
@@ -509,39 +508,6 @@ class Latest_Posts_Control
             ]
         );
 
-        // 广告帖子标题样式
-        $widget->add_control(
-            'ad_title_color',
-            [
-                'label' => esc_html__('Ad Title Color', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .news-item.ad-item .news-title' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $widget->add_control(
-            'ad_title_hover_color',
-            [
-                'label' => esc_html__('Ad Title Hover Color', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .news-item-link:hover .news-item.ad-item .news-title' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $widget->add_group_control(
-            Group_Control_Typography::get_type(),
-            [
-                'name' => 'ad_title_typography',
-                'label' => esc_html__('Ad Title Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-item.ad-item .news-title',
-            ]
-        );
-
-        // 普通帖子摘要样式
         $widget->add_control(
             'excerpt_color',
             [
@@ -562,28 +528,6 @@ class Latest_Posts_Control
             ]
         );
 
-        // 广告帖子摘要样式
-        $widget->add_control(
-            'ad_excerpt_color',
-            [
-                'label' => esc_html__('Ad Excerpt Color', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .news-item.ad-item .news-excerpt' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $widget->add_group_control(
-            Group_Control_Typography::get_type(),
-            [
-                'name' => 'ad_excerpt_typography',
-                'label' => esc_html__('Ad Excerpt Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-item.ad-item .news-excerpt',
-            ]
-        );
-
-        // 普通帖子元数据样式
         $widget->add_control(
             'meta_color',
             [
@@ -604,27 +548,6 @@ class Latest_Posts_Control
             ]
         );
 
-        // 广告帖子元数据样式
-        $widget->add_control(
-            'ad_meta_color',
-            [
-                'label' => esc_html__('Ad Meta Color', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .news-item.ad-item .news-meta' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $widget->add_group_control(
-            Group_Control_Typography::get_type(),
-            [
-                'name' => 'ad_meta_typography',
-                'label' => esc_html__('Ad Meta Typography', 'latest-posts-for-elementor'),
-                'selector' => '{{WRAPPER}} .news-item.ad-item .news-meta',
-            ]
-        );
-
         $widget->add_control(
             'category_color',
             [
@@ -632,17 +555,6 @@ class Latest_Posts_Control
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
                     '{{WRAPPER}} .news-category' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $widget->add_control(
-            'ad_category_color',
-            [
-                'label' => esc_html__('Ad Category Color', 'latest-posts-for-elementor'),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .news-category.ad-category' => 'color: {{VALUE}};',
                 ],
             ]
         );
@@ -672,13 +584,85 @@ class Latest_Posts_Control
             ]
         );
 
+        // 广告样式控件（移动到普通帖子样式控件之后）
+        $widget->add_control(
+            'ad_title_color',
+            [
+                'label' => esc_html__('Ad Title Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .custom-ad-item-{{ID}} .news-title' => 'color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $widget->add_control(
+            'ad_title_hover_color',
+            [
+                'label' => esc_html__('Ad Title Hover Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .news-item-link:hover .custom-ad-item-{{ID}} .news-title' => 'color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_title_typography',
+                'label' => esc_html__('Ad Title Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .custom-ad-item-{{ID}} .news-title',
+            ]
+        );
+
+        $widget->add_control(
+            'ad_excerpt_color',
+            [
+                'label' => esc_html__('Ad Excerpt Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .custom-ad-item-{{ID}} .news-excerpt' => 'color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_excerpt_typography',
+                'label' => esc_html__('Ad Excerpt Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .custom-ad-item-{{ID}} .news-excerpt',
+            ]
+        );
+
+        $widget->add_control(
+            'ad_meta_color',
+            [
+                'label' => esc_html__('Ad Meta Color', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'selectors' => [
+                    '{{WRAPPER}} .custom-ad-item-{{ID}} .news-meta' => 'color: {{VALUE}} !important;',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Typography::get_type(),
+            [
+                'name' => 'ad_meta_typography',
+                'label' => esc_html__('Ad Meta Typography', 'latest-posts-for-elementor'),
+                'selector' => '{{WRAPPER}} .custom-ad-item-{{ID}} .news-meta',
+            ]
+        );
+
         $widget->add_control(
             'ad_background_color',
             [
                 'label' => esc_html__('Ad Background Color', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'selectors' => [
-                    '{{WRAPPER}} .news-item.ad-item' => 'background-color: {{VALUE}};',
+                    '{{WRAPPER}} .custom-ad-item-{{ID}}' => 'background-color: {{VALUE}} !important;',
                 ],
             ]
         );
