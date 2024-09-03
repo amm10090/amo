@@ -158,6 +158,7 @@ class Latest_Posts_Widget extends Widget_Base
 
         echo '<a href="' . get_permalink() . '" class="news-item-link">';
         echo '<div class="news-item ' . $divider_class . '">';
+
         if ($settings['show_thumbnail'] === 'yes') {
             echo '<div class="news-thumbnail ' . $thumbnail_class . '">';
             the_post_thumbnail('medium');

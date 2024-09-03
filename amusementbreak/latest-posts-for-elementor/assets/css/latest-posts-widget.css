@@ -60,7 +60,7 @@
 .news-thumbnail {
 	flex: 0 0 200px;
 	overflow: hidden;
-	position: relative; /* 新增: 为AD角标定位 */
+	position: relative;
 }
 
 .layout-default .news-thumbnail {
@@ -172,34 +172,60 @@
 	background-color: #005177;
 }
 
-/* YouTube广告项目样式 */
-.news-item.ad-item {
-	background-color: #fff;
-	transition: all 0.3s ease;
-	border: 1px solid #e0e0e0;
-	overflow: hidden;
-	display: flex;
-	flex-direction: column;
+/* 列表布局样式 */
+.layout-list .news-container {
+	list-style-type: disc;
+	padding-left: 20px;
+	margin: 0;
 }
 
-.news-item.ad-item:hover {
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.layout-list .news-container li {
+	margin-bottom: 10px;
 }
 
-.news-item.ad-item .news-thumbnail {
-	flex: 0 0 200px;
-	overflow: hidden;
+.layout-list .news-item-link {
+	display: inline;
+	text-decoration: none;
+	color: inherit;
 }
 
-.news-item.ad-item .news-thumbnail img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	transition: transform 0.3s ease;
+.layout-list .news-item {
+	display: inline;
+	background: none;
+	border: none;
+	padding: 0;
 }
 
-.news-item.ad-item:hover .news-thumbnail img {
-	transform: scale(1.05);
+.layout-list .news-title {
+	display: inline;
+	font-size: inherit;
+	font-weight: normal;
+}
+
+.layout-list .news-thumbnail,
+.layout-list .news-excerpt,
+.layout-list .news-meta {
+	display: none;
+}
+
+/* 列表布局广告项样式 */
+.layout-list .ad-item {
+	list-style-type: none;
+	margin-left: -20px;
+	padding: 10px;
+	background-color: #f0f0f0;
+	border-radius: 5px;
+}
+
+.layout-list .ad-item .news-title,
+.layout-list .ad-item .news-excerpt,
+.layout-list .ad-item .news-meta {
+	display: block;
+}
+
+.layout-list .ad-item .news-thumbnail {
+	display: block;
+	margin-bottom: 10px;
 }
 
 /* 响应式设计 */
@@ -233,76 +259,93 @@
 	}
 }
 
-@media (max-width: 480px) {
-	.news-item,
-	.news-item.ad-item {
+/* 移动端默认布局优化 */
+@media (max-width: 767px) {
+	.latest-news-widget {
+		padding: 10px;
+	}
+
+	.latest-news-title {
+		font-size: 24px;
+		margin-bottom: 15px;
+	}
+
+	.layout-default .news-container {
+		display: flex;
 		flex-direction: column;
 	}
 
-	.news-thumbnail,
-	.news-item.ad-item .news-thumbnail {
-		flex: none;
-		margin-right: 0;
-		margin-bottom: 10px;
+	.layout-default .news-item {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 15px;
+		border: none;
+		border-bottom: 1px solid #e0e0e0;
+		padding-bottom: 15px;
 	}
 
-	.news-thumbnail img {
+	.layout-default .news-thumbnail {
+		flex: 0 0 50%;
+		margin-right: 15px;
+	}
+
+	.layout-default .news-content {
+		flex: 1;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.layout-default .news-title {
+		font-size: 16px;
+		margin-bottom: 5px;
+		line-height: 1.3;
+	}
+
+	.layout-default .news-excerpt {
+		display: none;
+	}
+
+	.layout-default .news-meta {
+		display: flex;
+		flex-direction: column;
+		margin-top: 5px;
+	}
+
+	.layout-default .news-date {
+		order: -1;
+		margin-bottom: 5px;
+		font-size: 12px;
+	}
+
+	.layout-default .news-category {
+		font-size: 11px;
+		text-transform: uppercase;
+		font-weight: bold;
+	}
+
+	.layout-default .news-author {
+		display: none;
+	}
+
+	.layout-default .news-thumbnail img {
 		width: 100%;
-		height: auto;
+		height: 100%;
+		object-fit: cover;
+		aspect-ratio: 16 / 9;
 	}
-}
-/* 列表布局样式 */
-.latest-news-widget.layout-list .news-container {
-	list-style-type: disc;
-	padding-left: 20px;
-	margin: 0;
-}
 
-.latest-news-widget.layout-list .news-container li {
-	margin-bottom: 10px;
-}
+	.layout-default .news-item.ad-item {
+		flex-direction: row;
+	}
 
-.latest-news-widget.layout-list .news-item-link {
-	display: inline;
-	text-decoration: none;
-	color: inherit;
-}
+	.layout-default .news-item.ad-item .news-thumbnail {
+		flex: 0 0 50%;
+		margin-right: 15px;
+		margin-bottom: 0;
+	}
 
-.latest-news-widget.layout-list .news-item {
-	display: inline;
-	background: none;
-	border: none;
-	padding: 0;
-}
-
-.latest-news-widget.layout-list .news-title {
-	display: inline;
-	font-size: inherit;
-	font-weight: normal;
-}
-
-.latest-news-widget.layout-list .news-thumbnail,
-.latest-news-widget.layout-list .news-excerpt,
-.latest-news-widget.layout-list .news-meta {
-	display: none;
-}
-
-/* 广告项样式 */
-.latest-news-widget.layout-list .ad-item {
-	list-style-type: none;
-	margin-left: -20px;
-	padding: 10px;
-	background-color: #f0f0f0;
-	border-radius: 5px;
-}
-
-.latest-news-widget.layout-list .ad-item .news-title,
-.latest-news-widget.layout-list .ad-item .news-excerpt,
-.latest-news-widget.layout-list .ad-item .news-meta {
-	display: block;
-}
-
-.latest-news-widget.layout-list .ad-item .news-thumbnail {
-	display: block;
-	margin-bottom: 10px;
+	.layout-default .news-item.ad-item .news-content {
+		width: auto;
+	}
 }
