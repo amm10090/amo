@@ -4,6 +4,8 @@ namespace Latest_Posts_For_Elementor\Controls;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
+use Elementor\Group_Control_Border;
+use Elementor\Group_Control_Box_Shadow;
 
 if (!defined('ABSPATH')) {
     exit; // 禁止直接访问
@@ -19,6 +21,42 @@ class Latest_Posts_Control
             'section_content',
             [
                 'label' => esc_html__('Content', 'latest-posts-for-elementor'),
+            ]
+        );
+
+        // 布局选择
+        $widget->add_control(
+            'layout',
+            [
+                'label' => esc_html__('Layout', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'default',
+                'options' => [
+                    'default' => esc_html__('Default', 'latest-posts-for-elementor'),
+                    'grid' => esc_html__('Grid', 'latest-posts-for-elementor'),
+                    'masonry' => esc_html__('Masonry', 'latest-posts-for-elementor'),
+                ],
+            ]
+        );
+
+        // 列数设置
+        $widget->add_responsive_control(
+            'columns',
+            [
+                'label' => esc_html__('Columns', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => '3',
+                'options' => [
+                    '1' => '1',
+                    '2' => '2',
+                    '3' => '3',
+                    '4' => '4',
+                    '5' => '5',
+                    '6' => '6',
+                ],
+                'condition' => [
+                    'layout!' => 'default',
+                ],
             ]
         );
 
@@ -381,6 +419,23 @@ class Latest_Posts_Control
             ]
         );
 
+        // 预设样式选择
+        $widget->add_control(
+            'preset_style',
+            [
+                'label' => esc_html__('Preset Style', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'default',
+                'options' => [
+                    'default' => esc_html__('Default', 'latest-posts-for-elementor'),
+                    'style1' => esc_html__('Style 1', 'latest-posts-for-elementor'),
+                    'style2' => esc_html__('Style 2', 'latest-posts-for-elementor'),
+                    'style3' => esc_html__('Style 3', 'latest-posts-for-elementor'),
+                    'patriotic' => esc_html__('Patriotic', 'latest-posts-for-elementor'),
+                ],
+            ]
+        );
+
         $widget->add_control(
             'title_bar_first_color',
             [
@@ -623,6 +678,27 @@ class Latest_Posts_Control
                 'selectors' => [
                     '{{WRAPPER}} .news-item.ad-item' => 'background-color: {{VALUE}};',
                 ],
+            ]
+        );
+
+        // 添加图片样式控件
+        $widget->add_control(
+            'image_border_radius',
+            [
+                'label' => esc_html__('Image Border Radius', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .news-thumbnail img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $widget->add_group_control(
+            Group_Control_Box_Shadow::get_type(),
+            [
+                'name' => 'image_box_shadow',
+                'selector' => '{{WRAPPER}} .news-thumbnail img',
             ]
         );
 

@@ -65,67 +65,6 @@ class Latest_Posts_Widget extends Widget_Base
     protected function register_controls()
     {
         Latest_Posts_Control::register_controls($this);
-
-        // 添加广告内容控制
-        $this->start_controls_section(
-            'section_ad_content',
-            [
-                'label' => esc_html__('Ad Content', 'latest-posts-for-elementor'),
-                'condition' => [
-                    'ad_type!' => 'none',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'ad_show_title',
-            [
-                'label' => esc_html__('Show Ad Title', 'latest-posts-for-elementor'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'default' => 'yes',
-            ]
-        );
-
-        $this->add_control(
-            'ad_show_excerpt',
-            [
-                'label' => esc_html__('Show Ad Excerpt', 'latest-posts-for-elementor'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'default' => 'yes',
-            ]
-        );
-
-        $this->add_control(
-            'ad_excerpt_length',
-            [
-                'label' => esc_html__('Ad Excerpt Length', 'latest-posts-for-elementor'),
-                'type' => \Elementor\Controls_Manager::NUMBER,
-                'default' => 25,
-                'condition' => [
-                    'ad_show_excerpt' => 'yes',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'ad_show_date',
-            [
-                'label' => esc_html__('Show Ad Date', 'latest-posts-for-elementor'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'default' => 'yes',
-            ]
-        );
-
-        $this->add_control(
-            'ad_show_author',
-            [
-                'label' => esc_html__('Show Ad Author', 'latest-posts-for-elementor'),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'default' => 'yes',
-            ]
-        );
-
-        $this->end_controls_section();
     }
 
     /**
@@ -145,7 +84,10 @@ class Latest_Posts_Widget extends Widget_Base
         $query = new \WP_Query($args);
 
         if ($query->have_posts()) {
-            echo '<div class="latest-news-widget" data-pagination-type="' . esc_attr($settings['pagination_type']) . '">';
+            // 添加布局和列数类
+            $layout_class = 'layout-' . $settings['layout'];
+            $columns_class = 'columns-' . $settings['columns'];
+            echo '<div class="latest-news-widget ' . $layout_class . ' ' . $columns_class . '" data-preset-style="' . esc_attr($settings['preset_style']) . '">';
 
             if ($settings['show_title_bar'] === 'yes') {
                 $this->render_title_bar($settings);
@@ -155,6 +97,7 @@ class Latest_Posts_Widget extends Widget_Base
                 $this->render_pagination($query, $settings);
             }
 
+            echo '<div class="news-container">';
             $post_count = 0;
             while ($query->have_posts()) {
                 $query->the_post();
@@ -169,6 +112,7 @@ class Latest_Posts_Widget extends Widget_Base
                     }
                 }
             }
+            echo '</div>'; // .news-container
 
             if (in_array($settings['pagination_position'], ['bottom', 'both'])) {
                 $this->render_pagination($query, $settings);

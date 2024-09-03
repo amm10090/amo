@@ -3,7 +3,7 @@ Contributors: huayangtian
 Tags: elementor, posts, widget, latest posts
 Requires at least: 5.0
 Tested up to: 6.2
-Stable tag: 4.1.5
+Stable tag: 5.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -56,55 +56,29 @@ Yes, ths plugin is an addon for Elementor and requires Elementor to be installed
 Yes, the widget provides various customization options. You can adjust the layout, typography, colors, and more using Elementor's built-in style options.
 
 == Changelog ==
+= 5.0.0 =
+插件更新日志：
 
-= 4.1.0=
+优化了文章布局系统，现在使用CSS Grid实现更灵活和响应式的设计。
+改进了默认布局和网格布局的结构，提高了整体展示效果和一致性。
+增强了响应式设计：
 
-# Latest Posts for Elementor 4.1.0 更新日志
-
-1. 优化标题栏设置
-   - 新增独立控制标题栏两个部分文本的选项
-   - 添加了分别设置"Latest"和"News"文字颜色的功能
-   - 增强了标题栏的排版控制
-
-2. 改进文章列表样式
-   - 添加了文章之间的分隔线选项
-   - 新增控制分隔线颜色的功能
-
-3. 增强Elementor编辑器中的自定义选项
-   - 文章标题字体、颜色和悬停颜色现可在编辑器中直接设置
-   - 摘要和元数据的样式选项得到扩展
-
-4. 性能优化
-   - 重构了部分代码以提高运行效率
-   - 优化了资源加载逻辑
-
-5. 兼容性提升
-   - 更新了对最新版本Elementor的兼容性检查
-   - 提高了与其他插件的兼容性
-
-6. 代码质量改进
-   - 重构了部分类和方法,提高了代码可读性和可维护性
-   - 增加了代码注释,便于未来的开发和维护
-
-7. 错误修复
-   - 解决了一些已知的小bug和样式问题
-
-这个版本主要聚焦于提高插件的可维护性、用户体验和与GitHub的集成,为未来的持续更新和维护奠定了基础。
+在中等屏幕尺寸（768px以下）保持左图右文的布局，提升可读性。
+为小屏幕设备（480px以下）优化了垂直布局。
 
 
-
-
-
-
-
-
-
-
-
-
-
+调整了网格布局样式，使用auto-fit和minmax实现更智能的列数调整。
+优化了文章元数据（日期、作者等）的显示位置，现在始终显示在文章内容底部。
+改进了缩略图样式，确保在各种布局和屏幕尺寸下都能正确显示。
+细化了响应式断点，提供更平滑的跨设备体验。
+统一并优化了文章卡片的样式，包括悬停效果和阴影。
+调整了字体大小和间距，提高了整体可读性。
+优化了分页和"加载更多"按钮的样式，与整体设计更加协调。
+优化了插件的性能，提升了加载速度和响应速度。
+修复了一些已知的小bug。
 
 == Upgrade Notice ==
+
 = 4.0.0 =
 ## 新功能
 
