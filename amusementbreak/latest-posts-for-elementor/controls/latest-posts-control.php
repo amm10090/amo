@@ -35,6 +35,8 @@ class Latest_Posts_Control
                     'default' => esc_html__('Default', 'latest-posts-for-elementor'),
                     'grid' => esc_html__('Grid', 'latest-posts-for-elementor'),
                     'masonry' => esc_html__('Masonry', 'latest-posts-for-elementor'),
+                    'list' => esc_html__('List', 'latest-posts-for-elementor'), // 无序列表
+
                 ],
             ]
         );

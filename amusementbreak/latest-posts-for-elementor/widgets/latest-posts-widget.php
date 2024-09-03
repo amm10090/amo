@@ -72,56 +72,69 @@ class Latest_Posts_Widget extends Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
-        $paged = get_query_var('paged') ? get_query_var('paged') : 1;
+        $layout = $settings['layout'];
 
-        $args = [
+        $layout_class = 'layout-' . $layout;
+        $columns_class = ($layout !== 'list') ? 'columns-' . $settings['columns'] : '';
+
+        echo '<div class="latest-news-widget ' . $layout_class . ' ' . $columns_class . '" data-preset-style="' . esc_attr($settings['preset_style']) . '">';
+
+        if ($settings['show_title_bar'] === 'yes') {
+            $this->render_title_bar($settings);
+        }
+
+        if ($layout === 'list') {
+            echo '<ul class="news-container">';
+        } else {
+            echo '<div class="news-container">';
+        }
+
+        $query = new \WP_Query([
             'post_type' => 'post',
             'posts_per_page' => $settings['posts_per_page'],
-            'paged' => $paged,
-        ];
-
-        $query = new \WP_Query($args);
+            'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
+        ]);
 
         if ($query->have_posts()) {
-            $layout_class = 'layout-' . $settings['layout'];
-            $columns_class = 'columns-' . $settings['columns'];
-            echo '<div class="latest-news-widget ' . $layout_class . ' ' . $columns_class . '" data-preset-style="' . esc_attr($settings['preset_style']) . '">';
-
-            if ($settings['show_title_bar'] === 'yes') {
-                $this->render_title_bar($settings);
-            }
-
-            if (in_array($settings['pagination_position'], ['top', 'both'])) {
-                $this->render_pagination($query, $settings);
-            }
-
-            echo '<div class="news-container">';
             $post_count = 0;
             while ($query->have_posts()) {
                 $query->the_post();
                 $post_count++;
 
+                if ($layout === 'list') {
+                    echo '<li>';
+                }
                 $this->render_post($settings, $post_count);
+                if ($layout === 'list') {
+                    echo '</li>';
+                }
 
                 // 插入广告
                 if ($settings['ad_type'] !== 'none' && $post_count % $settings['ad_position'] === 0) {
                     if ($settings['ad_repeat'] === 'yes' || (!$settings['ad_repeat'] && $post_count === $settings['ad_position'])) {
+                        if ($layout === 'list') {
+                            echo '<li class="ad-item">';
+                        }
                         $this->render_advertisement($settings);
+                        if ($layout === 'list') {
+                            echo '</li>';
+                        }
                     }
                 }
             }
-            echo '</div>'; // .news-container
-
-            if (in_array($settings['pagination_position'], ['bottom', 'both'])) {
-                $this->render_pagination($query, $settings);
-            }
-
-            echo '</div>'; // .latest-news-widget
-
             wp_reset_postdata();
         }
-    }
 
+        if ($layout === 'list') {
+            echo '</ul>';
+        } else {
+            echo '</div>';
+        }
+
+        $this->render_pagination($query, $settings);
+
+        echo '</div>'; // .latest-news-widget
+    }
     /**
      * 渲染标题栏
      */
