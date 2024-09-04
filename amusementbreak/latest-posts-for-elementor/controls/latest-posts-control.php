@@ -667,6 +667,7 @@ class Latest_Posts_Control
             ]
         );
 
+
         // 添加图片样式控件
         $widget->add_control(
             'image_border_radius',
@@ -747,6 +748,23 @@ class Latest_Posts_Control
                 'label' => esc_html__('Enable History', 'latest-posts-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'no',
+                'condition' => [
+                    'pagination_type!' => 'none',
+                ],
+            ]
+        );
+        $widget->add_control(
+            'pagination_style',
+            [
+                'label' => esc_html__('Pagination Style', 'latest-posts-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'default',
+                'options' => [
+                    'default' => esc_html__('Default', 'latest-posts-for-elementor'),
+                    'rounded' => esc_html__('Rounded', 'latest-posts-for-elementor'),
+                    'square' => esc_html__('Square', 'latest-posts-for-elementor'),
+                    'text' => esc_html__('Text', 'latest-posts-for-elementor'),
+                ],
                 'condition' => [
                     'pagination_type!' => 'none',
                 ],
