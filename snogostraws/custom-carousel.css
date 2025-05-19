@@ -1,0 +1,16 @@
+
+/* 修复Swiper容器样式，排除Main-carousel-image section内的轮播 */
+.elementor-image-carousel-wrapper:not(#Main-carousel-image .elementor-image-carousel-wrapper) {
+  overflow: hidden !important;
+}
+
+/* 设置非活动幻灯片的样式，排除Main-carousel-image section内的幻灯片 */
+.elementor-image-carousel:not(#Main-carousel-image .elementor-image-carousel) .swiper-slide {
+  opacity: 0.1 !important; 
+  transition: opacity 0.3s ease !important;
+}
+
+/* 设置活动幻灯片的样式，排除Main-carousel-image section内的幻灯片 */
+.elementor-image-carousel:not(#Main-carousel-image .elementor-image-carousel) .swiper-slide-active {
+  opacity: 1 !important;
+}
