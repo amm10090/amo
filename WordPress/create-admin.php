@@ -9,13 +9,6 @@
  * 3. 脚本执行后会自动删除自身
  */
 
-// 安全检查：防止在生产环境误用
-if (!defined('EMERGENCY_ACCESS') || EMERGENCY_ACCESS !== true) {
-    // 取消注释下面这行来启用脚本
-    // define('EMERGENCY_ACCESS', true);
-    
-    die('脚本未启用。请编辑文件并取消注释 EMERGENCY_ACCESS 定义。');
-}
 
 // 检查是否为WordPress环境
 if (!file_exists('./wp-config.php')) {
