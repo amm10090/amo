@@ -1,0 +1,184 @@
+rules:
+  # ==============================
+  # 1. 用户自定义强制规则 (Top Priority)
+  # ==============================
+  - "DOMAIN-SUFFIX,baidu.com,DIRECT"
+  - "DOMAIN-SUFFIX,tencent.com,DIRECT"
+  - "DOMAIN-SUFFIX,relay02.gaccode.com,DIRECT"
+  - "DOMAIN-SUFFIX,argotunnel.com,DIRECT"
+  - "IP-CIDR,82.25.95.136/32,DIRECT"
+  - "IP-CIDR,127.0.0.1/32,DIRECT"
+  - "DOMAIN-KEYWORD,immersivetranslate,DIRECT"
+  - "DOMAIN,pro.privnode.com,DIRECT"
+  - "DOMAIN-KEYWORD,fiat24,US"
+  - "DOMAIN-SUFFIX,1key.me,Google"
+
+
+
+  # ==============================
+  # 2. 广告拦截与隐私保护 (可选，若无 REJECT 策略组则改为 DIRECT 或删除)
+  # ==============================
+  - "DOMAIN-KEYWORD,ads,REJECT"
+  - "DOMAIN-SUFFIX,doubleclick.net,REJECT"
+  - "DOMAIN-SUFFIX,googleadservices.com,REJECT"
+  - "DOMAIN-SUFFIX,adsystem.com,REJECT"
+  - "DOMAIN-SUFFIX,umeng.com,REJECT"
+
+  # ==============================
+  # 3. 关键下载与更新直连 (节省流量 + 极速)
+  # ==============================
+  # > Apple 软件更新与下载 (走国内 CDN)
+  - "DOMAIN,mzstatic.com,DIRECT"
+  - "DOMAIN,iosapps.itunes.apple.com,DIRECT"
+  - "DOMAIN,osxapps.itunes.apple.com,DIRECT"
+  # > Microsoft Windows 更新
+  - "DOMAIN-SUFFIX,windowsupdate.com,DIRECT"
+  - "DOMAIN-SUFFIX,update.microsoft.com,DIRECT"
+  - "DOMAIN-SUFFIX,assets.msn.com,DIRECT"
+  # > Steam 下载 (内容服务器通常有国内节点)
+  - "DOMAIN-SUFFIX,steamcontent.com,DIRECT"
+  - "DOMAIN-SUFFIX,steamcdn-a.akamaihd.net,DIRECT"
+
+  # ==============================
+  # 4. 人工智能 (AI) 服务
+  # ==============================
+  # > OpenAI (ChatGPT)
+  - "DOMAIN-SUFFIX,openai.com,OpenAI"
+  - "DOMAIN-SUFFIX,chatgpt.com,OpenAI"
+  - "DOMAIN-SUFFIX,oaistatic.com,OpenAI"
+  - "DOMAIN-SUFFIX,oaiusercontent.com,OpenAI"
+  - "DOMAIN-KEYWORD,openai,OpenAI"
+  # > Claude (虽然您没有专用组，建议放入 OpenAI 或 Proxies)
+  - "DOMAIN-SUFFIX,anthropic.com,OpenAI"
+  - "DOMAIN-SUFFIX,claude.ai,OpenAI"
+  
+  # ==============================
+  # 5. 流媒体服务 (Streaming)
+  # ==============================
+  # > YouTube
+  - "DOMAIN-SUFFIX,youtube.com,YouTube"
+  - "DOMAIN-SUFFIX,googlevideo.com,YouTube"
+  - "DOMAIN-SUFFIX,youtu.be,YouTube"
+  - "DOMAIN-SUFFIX,gvt1.com,YouTube"
+  # > Netflix (包含测速域名)
+  - "DOMAIN-SUFFIX,netflix.com,Netflix"
+  - "DOMAIN-SUFFIX,netflix.net,Netflix"
+  - "DOMAIN-SUFFIX,nflxext.com,Netflix"
+  - "DOMAIN-SUFFIX,nflxvideo.net,Netflix"
+  - "DOMAIN-SUFFIX,fast.com,Netflix"
+  # > Disney+
+  - "DOMAIN-SUFFIX,disneyplus.com,Disney"
+  - "DOMAIN-SUFFIX,bamgrid.com,Disney"
+  # > Spotify
+  - "DOMAIN-SUFFIX,spotify.com,Spotify"
+  - "DOMAIN-SUFFIX,scdn.co,Spotify"
+  - "DOMAIN-SUFFIX,pscdn.co,Spotify"
+  # > Bahamut (巴哈姆特)
+  - "DOMAIN-SUFFIX,gamer.com.tw,Bahamut"
+  - "DOMAIN-SUFFIX,bahamut.com.tw,Bahamut"
+  # > Bilibili (除了港澳台限定，其他建议直连)
+  - "DOMAIN-SUFFIX,bilibili.com,DIRECT"
+  - "DOMAIN-SUFFIX,bilivideo.com,DIRECT"
+  # *注：如果需要看港澳台B站，可添加 DOMAIN-KEYWORD,bilibili,Bilibili 到底部
+
+  # ==============================
+  # 6. 通讯与社交 (Social & Comm)
+  # ==============================
+  # > Telegram (强制走代理，防止连接不上)
+  - "DOMAIN-SUFFIX,t.me,Telegram"
+  - "DOMAIN-SUFFIX,telegram.org,Telegram"
+  - "IP-CIDR,91.108.0.0/16,Telegram,no-resolve"
+  - "IP-CIDR,149.154.160.0/20,Telegram,no-resolve"
+  # > Twitter/X (您没有专用组，走 Proxies)
+  - "DOMAIN-SUFFIX,twitter.com,Proxies"
+  - "DOMAIN-SUFFIX,x.com,Proxies"
+  - "DOMAIN-SUFFIX,twimg.com,Proxies"
+  # > Meta (Facebook/Instagram/WhatsApp)
+  - "DOMAIN-SUFFIX,facebook.com,Proxies"
+  - "DOMAIN-SUFFIX,instagram.com,Proxies"
+  - "DOMAIN-SUFFIX,whatsapp.com,Proxies"
+  - "DOMAIN-SUFFIX,cdninstagram.com,Proxies"
+  - "DOMAIN-KEYWORD,facebook,Proxies"
+
+  # ==============================
+  # 7. 生产力与云服务
+  # ==============================
+  # > Google (通用)
+  - "DOMAIN-SUFFIX,google.com,Google"
+  - "DOMAIN-SUFFIX,gstatic.com,Google"
+  - "DOMAIN-SUFFIX,googleapis.com,Google"
+  - "DOMAIN-SUFFIX,gmail.com,Google"
+  - "DOMAIN-SUFFIX,android.com,Google"
+  # > Microsoft (通用 Office/OneDrive)
+  - "DOMAIN-SUFFIX,microsoft.com,Microsoft"
+  - "DOMAIN-SUFFIX,office.com,Microsoft"
+  - "DOMAIN-SUFFIX,live.com,Microsoft"
+  - "DOMAIN-SUFFIX,azure.com,Microsoft"
+  - "DOMAIN-SUFFIX,onedrive.com,Microsoft"
+  # > PayPal
+  - "DOMAIN-SUFFIX,paypal.com,PayPal"
+  - "DOMAIN-SUFFIX,paypalobjects.com,PayPal"
+  # > Apple (服务类)
+  - "DOMAIN-SUFFIX,apple.com,Apple"
+  - "DOMAIN-SUFFIX,icloud.com,Apple"
+  
+  # > GitHub (开发者常用，经常被墙)
+  - "DOMAIN-SUFFIX,github.com,Proxies"
+  - "DOMAIN-SUFFIX,githubusercontent.com,Proxies"
+
+  # ==============================
+  # 8. 局域网与国内直连 (兜底优化)
+  # ==============================
+  # > 局域网 (防止代理软件处理内网流量)
+  - "IP-CIDR,192.168.0.0/16,DIRECT"
+  - "IP-CIDR,10.0.0.0/8,DIRECT"
+  - "IP-CIDR,172.16.0.0/12,DIRECT"
+  - "IP-CIDR,127.0.0.0/8,DIRECT"
+  
+  # > 所有的 .cn 域名直连 (加速)
+  - "DOMAIN-SUFFIX,cn,DIRECT"
+  
+  # > GeoIP 中国直连 (核心规则)
+  - "GEOIP,CN,DIRECT"
+    # ==============================
+  # 💻 开发环境与容器服务 (Dev & Docker)
+  # ==============================
+  
+  # > Docker Hub 核心服务
+  # 很多时候 pull 失败是因为 auth 域名或 CDN 域名被墙
+  - "DOMAIN-SUFFIX,docker.com,Proxies"
+  - "DOMAIN-SUFFIX,docker.io,Proxies"
+  - "DOMAIN-SUFFIX,hub.docker.com,Proxies"
+  
+  # > Docker 镜像存储层 (最关键)
+  # Docker 的实际镜像层数据通常存储在 Amazon S3 或 Cloudflare CDN 上
+  - "DOMAIN-SUFFIX,production.cloudflare.docker.com,Proxies"
+  - "DOMAIN-SUFFIX,auth.docker.io,Proxies"
+  - "DOMAIN-SUFFIX,registry-1.docker.io,Proxies"
+
+  # > Google Container Registry (k8s 常用镜像)
+  # 很多 Kubernetes 基础镜像都在这里
+  - "DOMAIN-SUFFIX,gcr.io,Proxies"
+  - "DOMAIN-SUFFIX,k8s.io,Proxies"
+  - "DOMAIN-SUFFIX,quay.io,Proxies"  # RedHat 的镜像仓库
+  - "DOMAIN-SUFFIX,ghcr.io,Proxies"  # GitHub 的镜像仓库
+
+  # > 常见语言包管理器加速 (如果不配置国内镜像源，这些必须走代理)
+  # Python (PyPI)
+  - "DOMAIN-SUFFIX,pypi.org,Proxies"
+  - "DOMAIN-SUFFIX,pythonhosted.org,Proxies"
+  # Node.js (NPM / Yarn)
+  - "DOMAIN-SUFFIX,npmjs.com,Proxies"
+  - "DOMAIN-SUFFIX,yarnpkg.com,Proxies"
+  # Go Lang
+  - "DOMAIN-SUFFIX,go.dev,Proxies"
+  - "DOMAIN-SUFFIX,golang.org,Proxies"
+  # Java (Maven Central / Gradle)
+  - "DOMAIN-SUFFIX,maven.org,Proxies"
+  - "DOMAIN-SUFFIX,gradle.org,Proxies"
+  
+  # > Stack Overflow (开发者查问题必备，经常加载慢)
+  - "DOMAIN-SUFFIX,stackoverflow.com,Proxies"
+
+  # > 其余流量
+  - "MATCH,Final"
